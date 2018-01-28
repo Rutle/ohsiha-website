@@ -1,3 +1,5 @@
+// app.js
+
 'use strict';
 var mongoose        = require('mongoose');
 var SwaggerExpress  = require('swagger-express-mw');
@@ -50,7 +52,7 @@ app.get('/', (req, res) => { // '/' url it is listening
 });
 
 app.get('/login', function(req, res) {
-    res.render('login.ejs', { message: req.flash('loginMessage') });
+    res.render('login');
 });
 
 // process the login form
@@ -63,7 +65,9 @@ app.post('/login', passport.authenticate('local-login', {
 // SIGNUP =================================
 // show the signup form
 app.get('/signup', function(req, res) {
-    res.render('signup.ejs', { message: req.flash('signupMessage') });
+    res.render('signup', {
+      message: req.flash('signupMessage')
+    });
 });
 
 // process the signup form
