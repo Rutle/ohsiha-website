@@ -1,7 +1,8 @@
-var mongoose = require('mongoose');
+// batabase.js
 
-mongoose.connect('mongodb://localhost/test');
-
+//mongoose.connect('mongodb://localhost/test');
+/*mongoose.connect('mongodb://username:password@host:port/database?options...'); */
+/*
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function() {
@@ -36,3 +37,4 @@ Kitten.find(function (err, kittens) {
   if (err) return console.error(err);
   console.log(kittens);
 })
+*/
