@@ -1,0 +1,97 @@
+body {
+  padding-top: 1rem;
+  text-align: center;
+  text-shadow: 0 .05rem .1rem rgba(0, 0, 0, .25);
+  font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+  /*text-shadow: 1px 1px 1px rgba(0,0,0,0.004);*/
+
+}
+/*
+#navbarheader a.active {
+  border-bottom: 3px solid red;
+  background-color: #333;
+}
+*/
+
+#navbarheader a:hover {
+    border-bottom: 3x solid;
+    border-bottom-color: rgba(255, 255, 255, .7);
+}
+#navbarheader {
+    /*background-color: #333;*/
+    overflow: hidden;
+}
+.container-extra {
+  padding-top: 2rem;
+}
+.option-text { /*https://css-tricks.com/centering-css-complete-guide/*/
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+}
+
+.box{
+  border-bottom: 1px solid black;
+  border-image-source: linear-gradient(to right, black , white);
+	}
+
+.game-card-header {
+  text-transform: capitalize;
+}
+.game-card-buttons {
+  height: 50%;
+  width: 100%;
+}
+.game-card-buttons-col {
+  height: 100%;
+  width: 100%;
+}
+.game-card-buttons-group {
+  height: 100%;
+  width: 80%;
+}
+.game-card-char {
+   height: 100%;
+}
+#navbarheader a {
+  /*padding: .25rem 0;*/
+  font-weight: 700;
+  color: rgba(255, 255, 255, .5);
+  background-color: transparent;
+  border-bottom: .25rem solid transparent;
+}
+#navbarbrand {
+  margin-bottom: 0;
+}
+.nav-shadow {
+  box-shadow: 0 2px 4px -1px rgba(0,0,0,0.25);
+}
+.card-box {
+  box-shadow: 0 2px 4px -1px rgba(0,0,0,0.25);
+}
+
+.heading-border {
+  border: 1px solid red;
+}
+.test-border {
+  border: 1px solid red;
+}
+.black-bar {
+  height:1px;
+  background-color: black;
+  box-shadow: 0 2px 4px 0px rgba(0,0,0,0.25);
+}
+@media (max-width: 576px) {
+    /* only size 'xs' and below */
+    .game-card-buttons { /* Laita tänne se height / width game cardin contentille.*/
+        height: 50%;
+    }
+    .game-card-buttons-col {
+      height: 50%;
+    }
+    .game-card-char {
+       height: 50%;
+    }
+}

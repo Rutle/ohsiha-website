@@ -1,6 +1,8 @@
 'use strict';
 var mongoose        = require('mongoose');
 var SwaggerExpress  = require('swagger-express-mw');
+var swaggerUi       = require('swagger-ui-express');
+const YAML          = require('yamljs');
 var express         = require('express');
 //const db            = require('./db/database.js')
 var port            = process.env.PORT || 10010;
@@ -9,9 +11,12 @@ var session         = require('express-session')
 const exphbs        = require('express-handlebars');
 const path          = require('path');
 const publicPath    = path.join(__dirname, '/views');
+const swaggerDocument = YAML.load('./api/swagger/swagger.yaml');
+mongoose.connect('mongodb://localhost/test');
 
 const app = express();
 
+/* Configurations */
 app.engine('.hbs', exphbs({
 	defaultLayout: 'main',
 	extname: '.hbs',
@@ -19,6 +24,7 @@ app.engine('.hbs', exphbs({
 }));
 
 app.set('view engine', '.hbs');
+app.use('/bootstrap', express.static(__dirname + '/node_modules/bootstrap/'));
 app.use('/', express.static(publicPath));
 
 app.use(session({
@@ -28,21 +34,22 @@ app.use(session({
 	cookie: { secure: false}
 	})
 );
-
-module.exports = app; // for testing
+app.get('/', (req, res) => { // '/' url it is listening
+	res.render('home');
+});
+//module.exports = app; // for testing
 
 var config = {
   appRoot: __dirname // required config
 };
-app.get('/', (req, res) => { // '/' url it is listening
-	res.render('home');
-});
+
+
+/* Swagger configuration */
 SwaggerExpress.create(config, function(err, swaggerExpress) {
   if (err) { throw err; }
 
   // install middleware
   swaggerExpress.register(app);
-
 
   app.listen(port);
 
@@ -50,3 +57,6 @@ SwaggerExpress.create(config, function(err, swaggerExpress) {
     console.log('try this:\ncurl http://127.0.0.1:' + port + '/hello?name=Scott');
   }
 });
+
+// Include the API documentation using Swagger UI
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
