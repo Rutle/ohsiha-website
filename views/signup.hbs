@@ -1,11 +1,28 @@
 <div class="row justify-content-start"> <!-- Heading -->
-  <div class="col"><h1 class="text-left"><strong>></strong>Signup form<strong></h1></div>
+  <div class="col"><h1 class="text-left"><strong>></strong>Sign up form here<strong></h1></div>
 </div>
 
 <hr>
+<div class="row justify-content-center">
+  <div class="col-sm-4 align-text-center">
+    {{#if success}}
+    {{else}}
+     <div class="alert alert-danger"><{{message}}></div>
+    {{/if}}
+    <form action="/signup" method="post" class="form-signin">
+      <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
+      <label for="inputEmail" class="sr-only">Email address</label>
+      <input type="email" id="inputEmail" class="form-control" placeholder="Email address" required autofocus>
+      <label for="inputPassword" class="sr-only">Password</label>
+      <input type="password" id="inputPassword" class="form-control" placeholder="Password" required>
+      <div class="checkbox mb-3">
+        <label>
+          <input type="checkbox" value="remember-me"> Remember me
+        </label>
+      </div>
+      <button class="btn btn-lg btn-dark btn-block" type="submit">Sign in</button>
 
-<!--<h1 class="cover-heading">.</h1>-->
-<!--<p class="lead">Cover is a one-page template for building simple and beautiful home pages. Download, edit the text, and add your own fullscreen background photo to make it your own.</p>-->
-<p class="lead">
-  <a href="#" class="btn btn-lg btn-secondary">Learn more</a>
-</p>
+      <p class="mt-5 mb-3 text-muted">Already have an account? Log in <a href="/login">here.</a></p>
+    </form>
+  </div>
+</div>
