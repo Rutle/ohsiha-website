@@ -36,7 +36,8 @@ module.exports = function(passport) {
   });
 
   // Signup locally without OAuth etc.
-
+  // Add our own strategy into passport that is used when new user signups
+  // 'locally' as in without OAuth.
   passport.use('localSignup', new LocalPassStrat({
     usernameField: 'email',
     passwordField: 'password',
@@ -44,7 +45,7 @@ module.exports = function(passport) {
   },
   function(req, email, password, done) {
     process.nextTick(function() {
-      User.findOne({ 'basicLocal.email': email}, function(err, user) {
+      User.findOne({'basicLocal.email': email}, function(err, user) {
         if(err)
           return done(err)
         if(user) {
@@ -56,7 +57,8 @@ module.exports = function(passport) {
           newUser.basicLocal.email = email;
           // Use the model method genHash() to hash the password.
           newUser.basicLocal.password = newUser.genHash(password);
-
+          
+          // Add new user into MongoDB.
           newUser.save(function(err) {
             if(err)
               throw err;

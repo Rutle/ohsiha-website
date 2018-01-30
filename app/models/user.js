@@ -8,6 +8,12 @@ var bcrypt   = require('bcrypt-nodejs');
 // MongoDB schema for user model that is used for storing data to the MongoDB.
 // !! Kokeile tehdä ES6 luokalla !!
 var userSchema = mongoose.Schema({
+  /* Extra information to User
+  name:   String,                   // Name of user
+  UserID: Schema.Types.ObjectId,    // MongoDB ID for each user.
+  content: [Schema.Types.ObjectId], // To use identify content added by user to the website?
+  isVisible: Boolean,               // User visible on the user list?
+  */
   basicLocal: {
     email: String,
     password: String
