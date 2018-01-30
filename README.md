@@ -5,6 +5,7 @@ Website project for the course [TLO-32400 Ohjelmallinen sisällönhallinta](http
 - NodeJS
 - ExpressJS (+middleware)
 - Swagger
+- Mongoose
 
 ## Starting
 
