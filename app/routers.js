@@ -1,5 +1,5 @@
 // app/routers.js
-
+/*
 exports.userLogin = function(req, res){
     console.log(req.flash('loginMessage'));
     var successMessage = false;
@@ -25,7 +25,14 @@ exports.userProfile = function(req, res){
 
 
 exports.userSignup = function(req, res){
+  console.log(req.flash('signupMessage'));
+  var successMessage = false;
+  if(!(req.flash('signupMessage').size > 0)) {
+    successMessage = true;
+  }
   res.render('signup', {
-    message: req.flash('signupMessage')
+    message: req.flash('signupMessage'),
+    success: successMessage
   });
 };
+*/

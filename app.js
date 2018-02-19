@@ -22,7 +22,10 @@ const swaggerDocument = YAML.load('./api/swagger/swagger.yaml');
 var routes = require('./app/routers');
 
 // Connection to database.
-//mongoose.connect('mongodb://localhost/test');
+mongoose.connect('mongodb://localhost');
+
+// pass passport for configuration
+require('./app/passport')(passport);
 
 const app = express();
 
@@ -32,49 +35,84 @@ app.engine('.hbs', exphbs({
 	extname: '.hbs',
 	layoutsDir: path.join(__dirname, 'views/layouts')
 }));
-
 app.set('view engine', '.hbs');
+
 app.use('/bootstrap', express.static(__dirname + '/node_modules/bootstrap/'));
 app.use('/popper', express.static(__dirname + '/node_modules/popper.js/'));
 app.use('/', express.static(publicPath));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
-
+app.use(morgan('dev')); // log every request to the console
+app.use(cookieParser());
 app.use(session({
 	secret: "It's a secret!",
 	resave: true,
 	saveUninitialized: true
 	})
 );
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
+
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(flash());
-app.use(morgan('dev')); // log every request to the console
 
-// Routing of URLs
-// Base URL
+
+// #### Routing of URLs ####
+// Base URL (index)
 app.get('/', (req, res) => { // '/' url it is listening
 	res.render('home');
 });
 
-app.get('/profile', isLoggedIn, routes.userProfile);
-app.get('/logout', routes.userLogout);
-app.get('/login', routes.userLogin);
-app.get('/signup', routes.userSignup);
+app.get('/profile', isLoggedIn, function(req, res){
+  res.render('profile', {
+      user : req.user
+  });
+});
+app.get('/logout', function(req, res){
+  req.logout();
+  res.redirect('/');
+});
+app.get('/login', function(req, res){
+	var loginMessage = req.flash('loginMessage');
+  var successMessage = true;
+  if((loginMessage.size > 0)) {
+    successMessage = false;
+  }
+  res.render('login', {
+    message: loginMessage,
+    success: successMessage
+  });
+});
+
+
+app.get('/signup',function(req, res){
+	var signupMessage = req.flash('signupMessage');
+  var successMessage = true;
+	console.log("signupMessage: ", signupMessage)
+	console.log("length: ", signupMessage.length)
+  if(signupMessage.length > 0) {
+    successMessage = false;
+  }
+  res.render('signup', {
+    message: signupMessage,
+    success: successMessage
+  });
+});
 
 app.post('/login', passport.authenticate('local-login', {
-    successRedirect : '/profile', // redirect to the secure profile section
-    failureRedirect : '/login', // redirect back to the signup page if there is an error
-    failureFlash : true // allow flash messages
+  successRedirect : '/profile', // redirect to the secure profile section
+  failureRedirect : '/login', // redirect back to the signup page if there is an error
+  failureFlash : true // allow flash messages
 	})
 );
 
 // process the signup form (POST)
 app.post('/signup', passport.authenticate('local-signup', {
-    successRedirect : '/profile', // redirect to the secure profile section
-    failureRedirect : '/signup', // redirect back to the signup page if there is an error
-    failureFlash : true // allow flash messages
-}));
+  successRedirect : '/profile', // redirect to the secure profile section
+  failureRedirect : '/signup', // redirect back to the signup page if there is an error
+  failureFlash : true // allow flash messages
+  })
+);
 
 // Check if user is logged in with a middleware
 function isLoggedIn(req, res, next) {
