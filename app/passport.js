@@ -1,6 +1,6 @@
 // app/passport.js
 
-// Purpose ofthis file is to configure our Passport strategies.
+// Purpose of this file is to configure our Passport strategies.
 // Passport is used for authenticating requests and strategies are used for
 // different types of authentications such as OAuth, basic local username/password
 // authentication or even OpenID.
@@ -39,14 +39,13 @@ module.exports = function(passport) {
 
   // Signup locally without OAuth etc.
   // Add our own strategy into passport that is used when new user signups
-  // 'locally' as in without OAuth.
   passport.use('local-signup', new LocalStrategy({
     usernameField: 'email',
     passwordField: 'password',
     passReqToCallback: true
   },
   function(req, email, password, done) {
-    console.log("Uusi kayttis 1");
+    // console.log("Uusi kayttis");
     if (email)
       email = email.toLowerCase(); // Use lower-case e-mails to avoid case-sensitive e-mail matching
     process.nextTick(function() {
@@ -57,7 +56,7 @@ module.exports = function(passport) {
           // User with given email already exists.
           return done(null, false, req.flash('signupMessage', 'That email is already in use by another user.'));
         } else {
-          console.log("Uusi kayttis 2");
+          // console.log("Uusi kayttis 2");
           // Create a new user.
           var newUser = new User();
           newUser.local.email = email;
@@ -75,33 +74,28 @@ module.exports = function(passport) {
     });
 
   }));
+  // Login locally without OAuth etc.
+  // Add our own strategy into passport that is used when new user logs in.
   passport.use('local-login', new LocalStrategy({
-        // by default, local strategy uses username and password, we will override with email
         usernameField : 'email',
         passwordField : 'password',
-        passReqToCallback : true // allows us to pass back the entire request to the callback
+        passReqToCallback : true
     },
-    function(req, email, password, done) { // callback with email and password from our form
-
-        // find a user whose email is the same as the forms email
-        // we are checking to see if the user trying to login already exists
+    function(req, email, password, done) {
+        // Find a user with the same email address.
         User.findOne({ 'local.email' :  email }, function(err, user) {
             // if there are any errors, return the error before anything else
             if (err)
                 return done(err);
-
-            // if no user is found, return the message
+            // No such user.
             if (!user)
-                return done(null, false, req.flash('loginMessage', 'No user found.')); // req.flash is the way to set flashdata using connect-flash
-
-            // if the user is found but the password is wrong
+                return done(null, false, req.flash('loginMessage', 'No user found.'));
+            // Wrong password.
             if (!user.validPassword(password))
-                return done(null, false, req.flash('loginMessage', 'Oops! Wrong password.')); // create the loginMessage and save it to session as flashdata
-
-            // all is well, return successful user
+                return done(null, false, req.flash('loginMessage', 'Oops! Wrong password.'));
             return done(null, user);
         });
 
     }));
-  console.log('passport configuraatio loppu');
+  // console.log('passport configuraatio loppu');
 };

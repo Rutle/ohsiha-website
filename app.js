@@ -24,12 +24,12 @@ var routes = require('./app/routers');
 // Connection to database.
 mongoose.connect('mongodb://localhost');
 
-// pass passport for configuration
+// Configure passport with strageties to handle authentications.
 require('./app/passport')(passport);
 
 const app = express();
 
-/* Configurations */
+// #### Engine configuration ####
 app.engine('.hbs', exphbs({
 	defaultLayout: 'main',
 	extname: '.hbs',
@@ -37,21 +37,20 @@ app.engine('.hbs', exphbs({
 }));
 app.set('view engine', '.hbs');
 
+// #### Setup middleware ####
 app.use('/bootstrap', express.static(__dirname + '/node_modules/bootstrap/'));
 app.use('/popper', express.static(__dirname + '/node_modules/popper.js/'));
 app.use('/', express.static(publicPath));
 app.use(morgan('dev')); // log every request to the console
-app.use(cookieParser());
+app.use(cookieParser()); // Adds additional information to request (req.cookie).
 app.use(session({
 	secret: "It's a secret!",
 	resave: true,
 	saveUninitialized: true
 	})
 );
-app.use(bodyParser.json());
+app.use(bodyParser.json()); // Adds additional information to request (req.body).
 app.use(bodyParser.urlencoded({ extended: true }));
-
-
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(flash());
@@ -59,10 +58,11 @@ app.use(flash());
 
 // #### Routing of URLs ####
 // Base URL (index)
-app.get('/', (req, res) => { // '/' url it is listening
+app.get('/', (req, res) => {
 	res.render('home');
 });
 
+// Testing and possible page for profile and additional information.
 app.get('/profile', isLoggedIn, function(req, res){
   res.render('profile', {
       user : req.user
@@ -84,7 +84,6 @@ app.get('/login', function(req, res){
   });
 });
 
-
 app.get('/signup',function(req, res){
 	var signupMessage = req.flash('signupMessage');
   var successMessage = true;
@@ -99,6 +98,7 @@ app.get('/signup',function(req, res){
   });
 });
 
+// Handles submitted login form. (POST)
 app.post('/login', passport.authenticate('local-login', {
   successRedirect : '/profile', // redirect to the secure profile section
   failureRedirect : '/login', // redirect back to the signup page if there is an error
@@ -106,7 +106,7 @@ app.post('/login', passport.authenticate('local-login', {
 	})
 );
 
-// process the signup form (POST)
+// Handles submitted signup form. (POST)
 app.post('/signup', passport.authenticate('local-signup', {
   successRedirect : '/profile', // redirect to the secure profile section
   failureRedirect : '/signup', // redirect back to the signup page if there is an error
