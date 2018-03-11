@@ -6,6 +6,9 @@
 <div class="row justify-content-center">
   <div class="col-sm-4 align-text-center">
     <!-- Add another if to check if already logged in or do it on server side -->
+    {{#if userIsLogged}}
+      <h1 class="h3 mb-3 font-weight-normal">You are already logged in.</h1>
+    {{else}}
     {{#if success}}
     {{else}}
     <!-- Message when login fails. -->
@@ -27,6 +30,8 @@
       <button class="btn btn-lg btn-dark btn-block" type="submit">Log in</button>
 
       <p class="mt-5 mb-3 text-muted">Need an account? <a href="/signup">Signup</a></p>
+
     </form>
+    {{/if}}
   </div>
 </div>

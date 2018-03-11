@@ -55,17 +55,20 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(flash());
 
-
 // #### Routing of URLs ####
 // Base URL (index)
-app.get('/', (req, res) => {
-	res.render('home');
+app.get('/', function(req, res) {
+	res.render('home', {
+		user : req.user,
+		userIsLogged : (req.user ? true : false)
+	});
 });
 
 // Testing and possible page for profile and additional information.
 app.get('/profile', isLoggedIn, function(req, res){
   res.render('profile', {
-      user : req.user
+      user : req.user,
+			userIsLogged : (req.user ? true : false)
   });
 });
 app.get('/logout', function(req, res){
@@ -80,7 +83,8 @@ app.get('/login', function(req, res){
   }
   res.render('login', {
     message: loginMessage,
-    success: successMessage
+    success: successMessage,
+		userIsLogged : (req.user ? true : false)
   });
 });
 
@@ -94,19 +98,27 @@ app.get('/signup',function(req, res){
   }
   res.render('signup', {
     message: signupMessage,
-    success: successMessage
+    success: successMessage,
+		userIsLogged : (req.user ? true : false)
   });
 });
 
 // Handles submitted login form. (POST)
+// Use 'local-login' strategy.
 app.post('/login', passport.authenticate('local-login', {
   successRedirect : '/profile', // redirect to the secure profile section
   failureRedirect : '/login', // redirect back to the signup page if there is an error
   failureFlash : true // allow flash messages
 	})
+	// Gets called if auth was success, however, with redirect skips this part
+	//,
+	//function(req, res) {
+
+	//}
 );
 
 // Handles submitted signup form. (POST)
+// Use 'local-signup' strategy.
 app.post('/signup', passport.authenticate('local-signup', {
   successRedirect : '/profile', // redirect to the secure profile section
   failureRedirect : '/signup', // redirect back to the signup page if there is an error
