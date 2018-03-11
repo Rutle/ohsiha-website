@@ -9,8 +9,9 @@ var bcrypt   = require('bcrypt-nodejs');
 // !! Kokeile tehdä ES6 luokalla !!
 var userSchema = mongoose.Schema({
   /* Extra information to User to be added. */
-  name: String,                     // Name of user
-  surname: String,                  // Last name.
+  name: { type: String, default: 'None'},                     // Name of user
+  surname: { type: String, default: 'None'},                  // Last name.
+  rights: { type: String, default: 'User'},
   /*
   UserID: Schema.Types.ObjectId,    // MongoDB ID for each user.
   content: [Schema.Types.ObjectId], // To use identify content added by user to the website?

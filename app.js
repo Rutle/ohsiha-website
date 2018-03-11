@@ -13,7 +13,9 @@ var morgan          = require('morgan');
 var cookieParser    = require('cookie-parser');
 var bodyParser      = require('body-parser');
 var session         = require('express-session')
+var User            = require('./app/models/user');
 const exphbs        = require('express-handlebars');
+const hbsHelpers 		= require('./app/hbsHelpers');
 const path          = require('path');
 const publicPath    = path.join(__dirname, '/views');
 const swaggerDocument = YAML.load('./api/swagger/swagger.yaml');
@@ -36,8 +38,10 @@ const app = express();
 app.engine('.hbs', exphbs({
 	defaultLayout: 'main',
 	extname: '.hbs',
-	layoutsDir: path.join(__dirname, 'views/layouts')
+	layoutsDir: path.join(__dirname, 'views/layouts'),
+	helpers: hbsHelpers
 }));
+
 app.set('view engine', '.hbs');
 
 // #### Setup middleware ####
@@ -68,6 +72,21 @@ app.get('/', function(req, res) {
 		user : req.user,
 		userIsLogged : (req.user ? true : false)
 	});
+});
+
+app.get('/admin', isLoggedIn, function(req, res) {
+	if(req.user.rights === "Admin") {
+		return res.render('admin', {
+			user: req.user,
+			userIsLogged: (req.user ? true : false)
+		});
+	} else {
+		return res.render('home', {
+			user:req.user,
+			userIsLogged: (req.user ? true : false)
+		});
+	}
+
 });
 
 // Testing and possible page for profile and additional information.
@@ -145,7 +164,10 @@ app.post('/signup', passport.authenticate('local-signup', {
 // Handles submitted profile form. (POST)
 // Use validator to check that the fields container data in correct form.
 app.post('/profile', isLoggedIn, [
-	check('email').isEmail().withMessage('Must be an email.').trim().normalizeEmail()
+	// Checks the form's input field based on "name"-property.
+	check('password').exists().not().isEmpty(),
+	check('fname').exists(),
+	check('lname').exists()
 	// ...or throw your own errors using validators created with .custom()
 	/*
   .custom(value => {
@@ -153,6 +175,7 @@ app.post('/profile', isLoggedIn, [
       throw new Error('this email is already in use');
     })
   })*/
+
 ], function(req, res) {
 	const errors = validationResult(req);
 	if (!errors.isEmpty()) {
@@ -166,7 +189,31 @@ app.post('/profile', isLoggedIn, [
 	}
 	// Tee muutokset databaseen, jos ei tule virheitä.
 	const userData = matchedData(req);
-	console.log(userData);
+	console.log(req.user);
+	console.log(req.body.password);
+	console.log(req.body.fname);
+	console.log(req.user.local.email);
+	User.findOne({'local.email': req.user.local.email}, function(err, user) {
+		if(err) {
+			return done(err);
+		} else {
+			console.log("Paastiin paivittaan");
+			console.log(user);
+			// Modify user's information acquired from the form.
+			if (!(req.body.fname === "")) {
+				user.name = req.body.fname;
+			}
+			if (!(req.body.lname === "")) {
+				user.surname = req.body.lname;
+			}
+			// Update information.
+			user.save(function (err) {
+				if(err) {
+					console.error('ERROR');
+				}
+			});
+		}
+	});
 	res.render('profileUpdated', {
 		userIsLogged: (req.user ? true : false),
 		user: req.user

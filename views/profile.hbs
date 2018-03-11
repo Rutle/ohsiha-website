@@ -17,27 +17,27 @@
     <div class="col-sm-6">
       <form action="/profile" method="post">
         <div class="form-group row">
-          <label for="inputEmail" class="col-sm-3 col-form-label">Email</label>
+          <label for="staticEmail" class="col-sm-3 col-form-label">Email</label>
           <div class="col-sm-9">
-            <input type="email" class="form-control" id="inputEmail" name="email" placeholder="{{user.local.email}}">
+            <input type="text" readonly class="form-control-plaintext" id="staticEmail" value="{{user.local.email}}">
           </div>
         </div>
         <div class="form-group row">
           <label for="inputFName" class="col-sm-3 col-form-label">First name</label>
           <div class="col-sm-9">
-            <input type="text" class="form-control" id="inputFName" placeholder="{{user.name}}">
+            <input type="text" class="form-control" id="inputFName" name="fname" placeholder="{{user.name}}">
           </div>
         </div>
         <div class="form-group row">
           <label for="inputLName" class="col-sm-3 col-form-label">Last name</label>
           <div class="col-sm-9">
-            <input type="text" class="form-control" id="inputLName" placeholder="{{user.surname}}">
+            <input type="text" class="form-control" id="inputLName" name="lname" placeholder="{{user.surname}}">
           </div>
         </div>
         <div class="form-group row">
           <label for="inputPassword" class="col-sm-3 col-form-label">Password</label>
           <div class="col-sm-9">
-            <input type="password" class="form-control" id="inputPassword" placeholder="Required if modifying information">
+            <input type="password" class="form-control" id="inputPassword" name="password" placeholder="Required if modifying information">
           </div>
         </div>
         <div class="form-group row">
