@@ -18,6 +18,9 @@ const path          = require('path');
 const publicPath    = path.join(__dirname, '/views');
 const swaggerDocument = YAML.load('./api/swagger/swagger.yaml');
 
+const { check, validationResult } = require('express-validator/check');
+const { matchedData, sanitize } = require('express-validator/filter');
+
 // Routes
 var routes = require('./app/routers');
 
@@ -106,6 +109,15 @@ app.get('/signup',function(req, res){
   });
 });
 
+app.get('/profileUpdated', function(req, res){
+  res.render('profileUpdated', {
+		userIsLogged : (req.user ? true : false),
+		user: req.user
+  });
+});
+
+
+
 // #### 			POST 			####
 // Handles submitted login form. (POST)
 // Use 'local-login' strategy.
@@ -130,7 +142,36 @@ app.post('/signup', passport.authenticate('local-signup', {
   })
 );
 
-
+// Handles submitted profile form. (POST)
+// Use validator to check that the fields container data in correct form.
+app.post('/profile', isLoggedIn, [
+	check('email').isEmail().withMessage('Must be an email.').trim().normalizeEmail()
+	// ...or throw your own errors using validators created with .custom()
+	/*
+  .custom(value => {
+    return findUserByEmail(value).then(user => {
+      throw new Error('this email is already in use');
+    })
+  })*/
+], function(req, res) {
+	const errors = validationResult(req);
+	if (!errors.isEmpty()) {
+		console.log(errors.mapped());
+		return res.render('profile', {
+			isSuccess: false,
+			errors: errors.mapped(),
+			userIsLogged: (req.user ? true : false),
+			user: req.user
+		});
+	}
+	// Tee muutokset databaseen, jos ei tule virheitä.
+	const userData = matchedData(req);
+	console.log(userData);
+	res.render('profileUpdated', {
+		userIsLogged: (req.user ? true : false),
+		user: req.user
+	});
+});
 
 // Check if user is logged in with a middleware
 function isLoggedIn(req, res, next) {

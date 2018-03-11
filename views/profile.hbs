@@ -15,11 +15,11 @@
 </div>
 <div class="row">
     <div class="col-sm-6">
-      <form>
+      <form action="/profile" method="post">
         <div class="form-group row">
           <label for="inputEmail" class="col-sm-3 col-form-label">Email</label>
           <div class="col-sm-9">
-            <input type="email" class="form-control" id="inputEmail" placeholder="{{user.local.email}}">
+            <input type="email" class="form-control" id="inputEmail" name="email" placeholder="{{user.local.email}}">
           </div>
         </div>
         <div class="form-group row">
