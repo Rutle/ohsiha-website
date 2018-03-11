@@ -1,18 +1,51 @@
 <div class="row justify-content-start"> <!-- Heading -->
   <div class="col"><h1 class="text-left"><strong>></strong>Profile</h1></div>
 </div>
-  <div class="row">
-
-      <!-- LOCAL INFORMATION -->
-      <div class="col-sm-6">
-              <h3><span class="fa fa-user"></span> Local</h3>
-                  <p class="text-justify">
-                    <!-- <strong>UserID</strong>: {{user._id}}<br> -->
-                    <strong>First name</strong>: {{user.name}}<br>
-                    <strong>Last name</strong>: {{user.surname}}<br>
-                    <strong>Email</strong>: {{user.local.email}}<br>
-                    <!-- <strong>password</strong>: {{user.local.password}} -->
-                  </p>
-      </div>
-
+<div class="row">
+  <!--
+  <div class="col-sm-6">
+    <h3><span class="fa fa-user"></span> Local</h3>
+      <p class="text-justify">
+          <strong>First name</strong>: {{user.name}}<br>
+          <strong>Last name</strong>: {{user.surname}}<br>
+          <strong>Email</strong>: {{user.local.email}}<br>
+      </p>
   </div>
+-->
+</div>
+<div class="row">
+    <div class="col-sm-6">
+      <form>
+        <div class="form-group row">
+          <label for="inputEmail" class="col-sm-3 col-form-label">Email</label>
+          <div class="col-sm-9">
+            <input type="email" class="form-control" id="inputEmail" placeholder="{{user.local.email}}">
+          </div>
+        </div>
+        <div class="form-group row">
+          <label for="inputFName" class="col-sm-3 col-form-label">First name</label>
+          <div class="col-sm-9">
+            <input type="text" class="form-control" id="inputFName" placeholder="{{user.name}}">
+          </div>
+        </div>
+        <div class="form-group row">
+          <label for="inputLName" class="col-sm-3 col-form-label">Last name</label>
+          <div class="col-sm-9">
+            <input type="text" class="form-control" id="inputLName" placeholder="{{user.surname}}">
+          </div>
+        </div>
+        <div class="form-group row">
+          <label for="inputPassword" class="col-sm-3 col-form-label">Password</label>
+          <div class="col-sm-9">
+            <input type="password" class="form-control" id="inputPassword" placeholder="Required if modifying information">
+          </div>
+        </div>
+        <div class="form-group row">
+          <label for="submitData" class="col-sm-3 col-form-label">Apply changes</label>
+          <div class="col-sm-9">
+            <button class="btn btn-dark btn-block" id="submitData" type="submit">Submit</button>
+          </div>
+        </div>
+      </form>
+  </div>
+</div>

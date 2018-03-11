@@ -55,7 +55,10 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(flash());
 
+
+
 // #### Routing of URLs ####
+// #### 			GET 			####
 // Base URL (index)
 app.get('/', function(req, res) {
 	res.render('home', {
@@ -103,6 +106,7 @@ app.get('/signup',function(req, res){
   });
 });
 
+// #### 			POST 			####
 // Handles submitted login form. (POST)
 // Use 'local-login' strategy.
 app.post('/login', passport.authenticate('local-login', {
@@ -125,6 +129,8 @@ app.post('/signup', passport.authenticate('local-signup', {
   failureFlash : true // allow flash messages
   })
 );
+
+
 
 // Check if user is logged in with a middleware
 function isLoggedIn(req, res, next) {

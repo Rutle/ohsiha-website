@@ -7,7 +7,7 @@
     <meta name="author" content="">
     <link rel="icon" href="../../../../favicon.ico">
 
-    <title>Starter Template for Bootstrap</title>
+    <title>Ohjelmallinen Sisällönhallinta harjoitustyö</title>
 
     <!-- Bootstrap core CSS -->
     <link href="/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -30,14 +30,14 @@
           <li class="nav-item">
             <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
           </li>
+          {{#if userIsLogged}} <!-- User has logged in -->
           <li class="nav-item">
-            <a class="nav-link" href="/about">About</a>
+            <a class="nav-link" href="/profile">Profile</a>
           </li>
-          {{#if userIsLogged}}
           <li class="nav-item">
             <a class="nav-link" href="/logout">Log out</a>
           </li>
-          {{else}}
+          {{else}} <!-- User hasn't logged in -->
           <li class="nav-item">
             <a class="nav-link" href="/login">Login</a>
           </li>
