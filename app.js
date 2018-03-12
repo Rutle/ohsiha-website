@@ -116,8 +116,6 @@ app.get('/login', function(req, res){
 app.get('/signup',function(req, res){
 	var signupMessage = req.flash('signupMessage');
   var successMessage = true;
-	console.log("signupMessage: ", signupMessage)
-	console.log("length: ", signupMessage.length)
   if(signupMessage.length > 0) {
     successMessage = false;
   }
@@ -189,16 +187,10 @@ app.post('/profile', isLoggedIn, [
 	}
 	// Tee muutokset databaseen, jos ei tule virheitä.
 	const userData = matchedData(req);
-	console.log(req.user);
-	console.log(req.body.password);
-	console.log(req.body.fname);
-	console.log(req.user.local.email);
 	User.findOne({'local.email': req.user.local.email}, function(err, user) {
 		if(err) {
 			return done(err);
 		} else {
-			console.log("Paastiin paivittaan");
-			console.log(user);
 			// Modify user's information acquired from the form.
 			if (!(req.body.fname === "")) {
 				user.name = req.body.fname;
@@ -220,6 +212,18 @@ app.post('/profile', isLoggedIn, [
 	});
 });
 
+app.post('/deleteUser', isLoggedIn, function(req, res){
+
+	User.findByIdAndRemove({ _id: req.user._id }, function(err, user) {
+		if(err) {
+			return done(err);
+		} else {
+			console.log("user removed");
+		}
+	});
+	req.logout();
+	res.redirect('/');
+});
 // Check if user is logged in with a middleware
 function isLoggedIn(req, res, next) {
     if (req.isAuthenticated())

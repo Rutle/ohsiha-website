@@ -45,7 +45,6 @@ module.exports = function(passport) {
     passReqToCallback: true
   },
   function(req, email, password, done) {
-    // console.log("Uusi kayttis");
     if (email)
       email = email.toLowerCase(); // Use lower-case e-mails to avoid case-sensitive e-mail matching
     process.nextTick(function() {
@@ -62,7 +61,8 @@ module.exports = function(passport) {
           newUser.local.email = email;
           // Use the model method genHash() to hash the password.
           newUser.local.password = newUser.genHash(password);
-
+          newUser.local.firstName = req.body.fname;
+          newUser.local.lastName = req.body.lname;
           // Add new user into MongoDB.
           newUser.save(function(err) {
             if(err)
