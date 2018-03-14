@@ -34,6 +34,13 @@ userSchema.methods.genHash = function(password) {
 userSchema.methods.validPassword = function(password) {
   // Compares given 'password' and hashed password in model.
   return bcrypt.compareSync(password, this.local.password);
-}
+};
+
+userSchema.methods.comparePassword = function(candidatePassword, cb) {
+    bcrypt.compare(candidatePassword, this.local.password, function(err, isMatch) {
+        if (err) return cb(err);
+        cb(null, isMatch);
+    });
+};
 
 module.exports = mongoose.model('User', userSchema);

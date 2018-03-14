@@ -164,20 +164,12 @@ app.post('/signup', passport.authenticate('local-signup', {
 app.post('/profile', isLoggedIn, [
 	// Checks the form's input field based on "name"-property.
 	check('password').exists().not().isEmpty(),
-	check('fname').exists(),
-	check('lname').exists()
-	// ...or throw your own errors using validators created with .custom()
-	/*
-  .custom(value => {
-    return findUserByEmail(value).then(user => {
-      throw new Error('this email is already in use');
-    })
-  })*/
+	check('fname').exists().trim(),
+	check('lname').exists().trim()
 
 ], function(req, res) {
 	const errors = validationResult(req);
 	if (!errors.isEmpty()) {
-		console.log(errors.mapped());
 		return res.render('profile', {
 			isSuccess: false,
 			errors: errors.mapped(),
@@ -185,26 +177,31 @@ app.post('/profile', isLoggedIn, [
 			user: req.user
 		});
 	}
-	// Tee muutokset databaseen, jos ei tule virheitä.
 	const userData = matchedData(req);
 	User.findOne({'local.email': req.user.local.email}, function(err, user) {
 		if(err) {
 			return done(err);
-		} else {
-			// Modify user's information acquired from the form.
-			if (!(req.body.fname === "")) {
-				user.name = req.body.fname;
-			}
-			if (!(req.body.lname === "")) {
-				user.surname = req.body.lname;
-			}
-			// Update information.
-			user.save(function (err) {
-				if(err) {
-					console.error('ERROR');
-				}
-			});
 		}
+		console.log(req.body.password)
+		user.comparePassword(req.body.password, function(err, isMatch) {
+			if (err) {
+				console.log(err);
+			} else {
+				// Modify user's information acquired from the form.
+				if (!(req.body.fname === "")) {
+					user.local.firstName = req.body.fname;
+				}
+				if (!(req.body.lname === "")) {
+					user.local.lastName = req.body.lname;
+				}
+				// Update information.
+				user.save(function (err) {
+					if(err) {
+						console.error(err);
+					}
+				});
+			}
+		});
 	});
 	res.render('profileUpdated', {
 		userIsLogged: (req.user ? true : false),
