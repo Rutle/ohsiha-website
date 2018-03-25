@@ -39,7 +39,8 @@ app.engine('.hbs', exphbs({
 	defaultLayout: 'main',
 	extname: '.hbs',
 	layoutsDir: path.join(__dirname, 'views/layouts'),
-	helpers: hbsHelpers
+	helpers: hbsHelpers,
+	partialsDir: ['views/partials']
 }));
 
 app.set('view engine', '.hbs');
@@ -160,9 +161,9 @@ app.post('/signup', passport.authenticate('local-signup', {
 );
 
 // Handles submitted profile form. (POST)
-// Use validator to check that the fields container data in correct form.
+// Use validator to check that the fields contain data in the correct form.
 app.post('/profile', isLoggedIn, [
-	// Checks the form's input field based on "name"-property.
+	// Checks the form's input field based on the "name"-property.
 	check('password').exists().not().isEmpty(),
 	check('fname').exists().trim(),
 	check('lname').exists().trim()
