@@ -1,14 +1,16 @@
 // app/models/article.js
 // Javascript file for MongoDB Article-schema intended for storing articles.
+// Useful info: https://alexanderzeitler.com/articles/mongoose-referencing-schema-in-properties-and-arrays/
+// I'm not sure if I should separate the comments into its own Schema.
 
-// Require 'mongoose' to get the needed schema object for user model.
 var mongoose = require('mongoose');
 
 // MongoDB schema for an article model.
 var articleSchema = mongoose.Schema({
   author: {                           // ObjectId of the writer of the article.
     type: Schema.Types.ObjectId,
-    required: true
+    required: true,
+    ref: 'User'
   },
   title: {                            // Article title.
     type: String,
