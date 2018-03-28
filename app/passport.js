@@ -7,13 +7,15 @@
 // http://www.passportjs.org/docs/
 // https://www.npmjs.com/package/passport
 // Example: https://github.com/passport/express-4.x-local-example
+// Done following this tutorial: https://scotch.io/tutorials/easy-node-authentication-setup-and-local
 
 
 // For basic local username/password authentication
-var LocalStrategy = require('passport-local').Strategy;
-var TwitterStrategy  = require('passport-twitter').Strategy;
-var User           = require('../app/models/user');
+var LocalStrategy     = require('passport-local').Strategy;
+var TwitterStrategy   = require('passport-twitter').Strategy;
+var User              = require('../app/models/user');
 
+var authData          = require('./auth');
 
 module.exports = function(passport) {
   console.log('passport configuraatio');
@@ -98,5 +100,49 @@ module.exports = function(passport) {
         });
 
     }));
-  // console.log('passport configuraatio loppu');
+
+    // Passport configuration for twitter auth.
+    passport.use(new TwitterStrategy({
+
+        consumerKey     : authData.twitterAuth.consumerKey,
+        consumerSecret  : authData.twitterAuth.consumerSecret,
+        callbackURL     : authData.twitterAuth.callbackURL
+
+    },
+    function(token, tokenSecret, profile, done) {
+
+        process.nextTick(function() {
+
+            User.findOne({ 'twitter.id' : profile.id }, function(err, user) {
+
+                // if there is an error, stop everything and return that
+                // ie an error connecting to the database
+                if (err)
+                    return done(err);
+
+                // Found user is logged in.
+                if (user) {
+                    return done(null, user);
+                } else {
+                    // if there is no user, create them
+                    var newUser  = new User();
+
+                    // set all of the user data that we need
+                    newUser.twitter.id          = profile.id;
+                    newUser.twitter.token       = token;
+                    newUser.twitter.username    = profile.username;
+                    newUser.twitter.displayName = profile.displayName;
+
+                    // save our user into the database
+                    newUser.save(function(err) {
+                        if (err)
+                            throw err;
+                        return done(null, newUser);
+                    });
+                }
+            });
+
+          });
+
+    }));
 };

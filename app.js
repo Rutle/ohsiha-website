@@ -134,7 +134,17 @@ app.get('/profileUpdated', function(req, res){
   });
 });
 
+// Twitter Routes
+// Authentication
+app.get('/auth/twitter', passport.authenticate('twitter'));
 
+// Callback handler.
+app.get('/auth/twitter/callback', 
+	passport.authenticate('twitter', {
+		successRedirect: '/profile',
+		failureRedirect: '/'
+	}
+));
 
 // #### 			POST 			####
 // Handles submitted login form. (POST)

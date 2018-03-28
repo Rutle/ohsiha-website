@@ -15,12 +15,12 @@ var userSchema = mongoose.Schema({
     firstName: { type: String, default: 'None'},         // Name of user
     lastName: { type: String, default: 'None'},          // Last name.
   },
-  googleAuth: {
-    id: String,
-    token: String,
-    email: String,
-    password: String
-  }
+  twitter: {
+      id: String,
+      token: String,
+      displayName: String,
+      username: String
+  },
 });
 
 
