@@ -11,6 +11,7 @@
 
 // For basic local username/password authentication
 var LocalStrategy = require('passport-local').Strategy;
+var TwitterStrategy  = require('passport-twitter').Strategy;
 var User           = require('../app/models/user');
 
 

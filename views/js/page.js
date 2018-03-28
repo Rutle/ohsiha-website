@@ -35,15 +35,16 @@ $("#navbar a").click(function () {
   });
 });
 */
-
+/*
 $(function() {
   if (location.pathname.split("/")[1] === "") {
     $('#home').addClass('active');
   } else {
-    $('#navbar nav a[href^="/' + location.pathname.split("/")[1] + '"]').addClass('active');
+    $('#navbarheader a[href^="/' + location.pathname.split("/")[1] + '"]').addClass('active');
   }
 
 });
+*/
 /*
 $(document).ready(function() {
   $('#hiraganaBtn').click(function () {
