@@ -1,0 +1,37 @@
+<h1 class="my-4">Sign up
+</h1>
+
+<div class="row justify-content-center">
+  <div class="col-sm-6 align-text-center">
+    <!-- Add another if to check if already logged in or do it on server side -->
+    {{#if userIsLogged}}
+      {{#if success}}
+
+      {{else}}
+        <!-- Message when login fails. -->
+        <div class="alert alert-danger">{{message}}</div>
+      {{/if}}
+      <form action="/connect/local" method="post" class="form-group">
+        <h1 class="h3 mb-3 font-weight-normal">Add local account</h1>
+        <input type="text" id="inputEmail" name="email" class="form-control" placeholder="Email address" required autofocus>
+        <input type="password" id="inputPassword" name="password" class="form-control" placeholder="Password" required>
+        <div class="row">
+          <div class="col-xs-4 col-sm-4 col-md-4">
+            <div class="form-group">
+              <input type="text" name="fname" id="first_name" class="form-control input-sm" placeholder="First Name" required>
+            </div>
+          </div>
+          <div class="col-xs-8 col-sm-8 col-md-8">
+            <div class="form-group">
+              <input type="text" name="lname" id="last_name" class="form-control input-sm" placeholder="Last Name" required>
+            </div>
+          </div>
+        </div>
+        <button class="btn btn-lg btn-dark btn-block" type="submit">Add local</button>
+      </form>
+      <p><a href="/profile">Go back to profile</a></p>
+    {{else}}
+      <h1 class="h3 mb-3 font-weight-normal">You are not logged in. Please <a href="/login">log in</a> first.</h1>
+    {{/if}}
+  </div>
+</div>

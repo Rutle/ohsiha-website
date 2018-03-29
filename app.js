@@ -92,15 +92,30 @@ app.get('/admin', isLoggedIn, function(req, res) {
 
 // Testing and possible page for profile and additional information.
 app.get('/profile', isLoggedIn, function(req, res){
+	var twitterLink = true;
+	var localLink = true;
+	if (req.user.twitter.token === undefined) {
+		twitterLink = false;
+	}
+	if (req.user.local.email === undefined) {
+		localLink = false;
+	}
+
   res.render('profile', {
       user : req.user,
+			isTwitterLinked: twitterLink,
+			isLocalLinked: localLink,
 			userIsLogged : (req.user ? true : false)
   });
 });
+
+// Logout route
 app.get('/logout', function(req, res){
   req.logout();
   res.redirect('/');
 });
+
+// Login route
 app.get('/login', function(req, res){
 	var loginMessage = req.flash('loginMessage');
   var successMessage = true;
@@ -136,16 +151,66 @@ app.get('/profileUpdated', function(req, res){
 
 // Twitter Routes
 // Authentication
-app.get('/auth/twitter', passport.authenticate('twitter'));
+app.get('/auth/twitter', passport.authenticate('twitter', {scope: 'email'}));
 
 // Callback handler.
-app.get('/auth/twitter/callback', 
+app.get('/auth/twitter/callback',
 	passport.authenticate('twitter', {
 		successRedirect: '/profile',
 		failureRedirect: '/'
 	}
 ));
 
+// Connect twitter and local account
+app.get('/connect/local', function(req, res) {
+	var signupMessage = req.flash('signupMessage');
+	var successMessage = true;
+	if(signupMessage.length > 0) {
+		successMessage = false;
+	}
+	res.render('connect-local.hbs', {
+		message: signupMessage,
+		success: successMessage,
+		userIsLogged : (req.user ? true : false)
+	});
+});
+
+app.post('/connect/local', passport.authenticate('local-signup', {
+	successRedirect: '/profile',
+	failureRedirect: '/connect/local',
+	failureFlash: true
+}));
+// send to twitter to do the authentication
+app.get('/connect/twitter', passport.authorize('twitter', { scope : 'email' }));
+
+// handle the callback after twitter has authorized the user
+app.get('/connect/twitter/callback',
+		passport.authorize('twitter', {
+				successRedirect : '/profile',
+				failureRedirect : '/'
+}));
+
+// Unlink accounts
+// Local unlinking
+app.get('/unlink/local', function(req, res) {
+	var user            	= req.user;
+	user.local.email    	= undefined;
+	user.local.password 	= undefined;
+	user.local.firstName 	= undefined;
+	user.local.lastName 	= undefined;
+
+	user.save(function(err) {
+		res.redirect('/profile');
+	});
+});
+// twitter unlinking
+app.get('/unlink/twitter', function(req, res) {
+	var user           = req.user;
+	user.twitter.token = undefined;
+	user.save(function(err) {
+		res.redirect('/profile');
+	});
+});
 // #### 			POST 			####
 // Handles submitted login form. (POST)
 // Use 'local-login' strategy.
@@ -221,7 +286,7 @@ app.post('/profile', isLoggedIn, [
 });
 
 app.post('/deleteUser', isLoggedIn, function(req, res){
-
+  // Perhaps also remove all blog posts by this user as well.
 	User.findByIdAndRemove({ _id: req.user._id }, function(err, user) {
 		if(err) {
 			return done(err);
