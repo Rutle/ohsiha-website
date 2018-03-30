@@ -27,7 +27,7 @@
     "popper.js": "^1.12.9",
     "swagger-express-mw": "^0.7.0",
     "swagger-ui-express": "^2.0.15",
-    "twitter": "^1.7.1",
+    "twit": "^2.2.9",
     "yamljs": "^0.3.0"
   },
   "devDependencies": {
