@@ -158,7 +158,6 @@ app.get('/profileUpdated', isLoggedIn, function(req, res) {
 });
 
 app.get('/dashboard', isLoggedIn, function(req, res) {
-
 	res.render('dashboard', {
 		userIsLogged: (req.user ? true : false),
 		user: req.user

@@ -29,7 +29,7 @@ body {
 }
 .tab-content {
     background-color:#fcfcfc;
-    padding:5px;
+    padding:1rem;
 }
 #navbarheader a:hover {
     border-bottom: 3x solid;
