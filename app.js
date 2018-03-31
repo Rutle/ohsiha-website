@@ -23,8 +23,14 @@ const swaggerDocument = YAML.load('./api/swagger/swagger.yaml');
 const { check, validationResult } = require('express-validator/check');
 const { matchedData, sanitize } = require('express-validator/filter');
 
+// Tweets
+var twit = require('./app/tweets');
+
+// Markov
+var markovGen = require('./app/markovgen')
+
 // Routes
-var routes = require('./app/routers');
+// var routes = require('./app/routers');
 
 // Connection to database.
 mongoose.connect('mongodb://localhost');
