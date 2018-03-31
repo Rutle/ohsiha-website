@@ -1,0 +1,16 @@
+<div class="row justify-content-center">
+  <form action="/articlepreview" method="post">
+    <div class="form-group">
+      <label for="title">Title for the blog post:</label>
+      <input type="text" class="form-control" id="title" placeholder="{{title}}">
+    </div>
+    <div class="form-group">
+      <label for="author">Author of the blog post</label>
+      <input type="text" class="form-control" id="author" placeholder="{{user.twitter.displayName}}" disabled>
+    </div>
+    <div class="form-group">
+      <label for="generatedPost">Example textarea</label>
+      <textarea class="form-control" id="generatedPost" rows="5" placeholder="{{blogPost}}"></textarea>
+    </div>
+  </form>
+</div>

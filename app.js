@@ -13,7 +13,7 @@ var morgan          = require('morgan');
 var cookieParser    = require('cookie-parser');
 var bodyParser      = require('body-parser');
 var session         = require('express-session')
-var User            = require('./app/models/user');
+
 const exphbs        = require('express-handlebars');
 const hbsHelpers 		= require('./app/hbsHelpers');
 const path          = require('path');
@@ -28,6 +28,12 @@ var twit = require('./app/tweets');
 
 // Markov
 var markovGen = require('./app/markovgen')
+
+// Article Schema
+var Article = require('./app/models/article');
+
+// User Schema
+var User = require('./app/models/user');
 
 // Routes
 // var routes = require('./app/routers');
@@ -158,9 +164,14 @@ app.get('/profileUpdated', isLoggedIn, function(req, res) {
 });
 
 app.get('/dashboard', isLoggedIn, function(req, res) {
+	var twitterLink = true;
+	if (req.user.twitter.token === undefined) {
+		twitterLink = false;
+	}
 	res.render('dashboard', {
 		userIsLogged: (req.user ? true : false),
-		user: req.user
+		user: req.user,
+		isTwitterLinked: twitterLink
 	})
 })
 
@@ -302,6 +313,67 @@ app.post('/profile', isLoggedIn, [
 		user: req.user
 	});
 });
+
+app.post('/articlepreview', isLoggedIn, [
+	check('numTweets').exists().not().isEmpty(),
+	check('title').exists().trim(),
+], function(req, res) {
+	const errors = validationResult(req);
+	if (!errors.isEmpty()) {
+		return res.render('articlepreview', {
+			isSuccess: false,
+			errors: errors.mapped(),
+			userIsLogged: (req.user ? true : false),
+			user: req.user
+		});
+	}
+	// matchedData returns only the subset of data validated by the middleware
+	const postData = matchedData(req);
+	console.log(postData);
+	var blogPost = "";
+	var title = "Clever musings.";
+	var dateCreated = new Date();
+	console.log("id ", req.user._id);
+	User.findById(req.user._id, function(err, user) {
+		if(err) {
+			return done(err);
+		}
+		console.log(user);
+		// Article consists of:
+		/*
+		author
+		title
+		content
+		dateCreated
+		dateModified
+		comments: [author, dateCreated]
+		*/
+
+		var newArticle = new Article();
+		newArticle.author = user._id;
+		newArticle.title = title;
+		newArticle.content = "Testi";
+		var dateCreated = new Date(newArticle.dateCreated);
+		// Add a new article into database.
+		newArticle.save(function(err) {
+			if(err) {
+				console.error(err);
+			}
+		});
+
+	});
+	console.log(dateCreated);
+	res.render('articlepreview', {
+		isSuccess: true,
+		userIsLogged: (req.user ? true : false),
+		user: req.user,
+		blogPost: blogPost,
+		title: title,
+		dateCreated: dateCreated.toDateString()
+	});
+});
+
+app.post('/submitpost', isLoggedIn, )
 
 app.post('/deleteUser', isLoggedIn, function(req, res){
   // Perhaps also remove all blog posts by this user as well.

@@ -8,7 +8,7 @@ var mongoose = require('mongoose');
 // MongoDB schema for an article model.
 var articleSchema = mongoose.Schema({
   author: {                           // ObjectId of the writer of the article.
-    type: Schema.Types.ObjectId,
+    type: mongoose.Schema.Types.ObjectId,
     required: true,
     ref: 'User'
   },
@@ -31,7 +31,7 @@ var articleSchema = mongoose.Schema({
   comments: [{
     text: String,
     author: {
-      type: Schema.Types.ObjectId,
+      type: mongoose.Schema.Types.ObjectId,
       ref: 'User'
     },
     dateCreated: {
