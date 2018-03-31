@@ -18,6 +18,19 @@ body {
 }
 */
 
+/*
+.card-footer {
+    background: #bfbfbf;
+}
+*/
+
+.nav>li>a {
+    color: #666;
+}
+.tab-content {
+    background-color:#fcfcfc;
+    padding:5px;
+}
 #navbarheader a:hover {
     border-bottom: 3x solid;
     border-bottom-color: rgba(255, 255, 255, .7);

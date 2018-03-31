@@ -72,7 +72,7 @@ app.use(flash());
 
 
 // #### Routing of URLs ####
-// #### 			GET 			####
+// #### GET	####
 // Base URL (index)
 app.get('/', function(req, res) {
 	res.render('home', {
@@ -81,6 +81,7 @@ app.get('/', function(req, res) {
 	});
 });
 
+// Possible Admin page.
 app.get('/admin', isLoggedIn, function(req, res) {
 	if(req.user.rights === "Admin") {
 		return res.render('admin', {
@@ -134,8 +135,8 @@ app.get('/login', function(req, res){
 		userIsLogged : (req.user ? true : false)
   });
 });
-
-app.get('/signup',function(req, res){
+// Signup route
+app.get('/signup', function(req, res){
 	var signupMessage = req.flash('signupMessage');
   var successMessage = true;
   if(signupMessage.length > 0) {
@@ -148,12 +149,21 @@ app.get('/signup',function(req, res){
   });
 });
 
-app.get('/profileUpdated', function(req, res){
+// Updated profile route
+app.get('/profileUpdated', isLoggedIn, function(req, res) {
   res.render('profileUpdated', {
 		userIsLogged : (req.user ? true : false),
 		user: req.user
   });
 });
+
+app.get('/dashboard', isLoggedIn, function(req, res) {
+
+	res.render('dashboard', {
+		userIsLogged: (req.user ? true : false),
+		user: req.user
+	})
+})
 
 // Twitter Routes
 // Authentication
@@ -209,6 +219,7 @@ app.get('/unlink/local', function(req, res) {
 		res.redirect('/profile');
 	});
 });
+
 // twitter unlinking
 app.get('/unlink/twitter', function(req, res) {
 	var user           = req.user;
@@ -217,7 +228,9 @@ app.get('/unlink/twitter', function(req, res) {
 		res.redirect('/profile');
 	});
 });
-// #### 			POST 			####
+
+
+// ####	POST	####
 // Handles submitted login form. (POST)
 // Use 'local-login' strategy.
 app.post('/login', passport.authenticate('local-login', {
