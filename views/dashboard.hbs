@@ -34,27 +34,28 @@
   <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">pro</div>
   <div class="tab-pane fade" id="stats" role="tabpanel" aria-labelledby="stats-tab">Stats</div>
   <div class="tab-pane fade" id="generate" role="tabpanel" aria-labelledby="generate-tab">
-    <h3 class="my-4">Generate a new blog post
-    </h3>
-    <div class="row justify-content-center">
-      <div class="col-md-4 my-4">
-        <form action="/articlepreview" method="post">
-        <div class="form-group">
-          <label for="numSelect">Example select</label>
-          <select class="form-control" name="numTweets" id="numSelect">
-            <option>10</option>
-            <option>20</option>
-            <option>50</option>
-            <option>100</option>
-            <option>200</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="title">Optional title for the blog post</label>
-          <input type="text" class="form-control" name="title" id="title" placeholder="<Optional amazing blog post>">
-        </div>
-        <button type="submit" class="btn btn-lg btn-dark btn-sm">Submit</button>
+
+    <div class="row">
+      <div class="col-md-6 my-4">
+        <form name="fetchData">
+          <div class="form-group">
+            <label for="pwd">Data:</label>
+            <input type="submit" class="form-control btn btn-lg btn-dark btn-sm" id="pwd" value="Update/Fetch twitter data">
+          </div>
+      </form>
       </div>
     </div>
+
+    <div class="row">
+      <div class="col-md-6 my-4">
+        <form action="/articlepreview" method="post">
+        <div class="form-group">
+          <label for="title">Generate a blog post:</label>
+          <input type="submit" class="form-control btn btn-lg btn-dark btn-sm" name="title" id="title" value="Generate">
+        </div>
+      </form>
+      </div>
+    </div>
+
   </div>
 </div>
