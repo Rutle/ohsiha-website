@@ -1,3 +1,4 @@
+
 <h1 class="my-4">Dashboard
 </h1>
 
@@ -36,18 +37,18 @@
   <div class="tab-pane fade" id="generate" role="tabpanel" aria-labelledby="generate-tab">
 
     <div class="row">
-      <div class="col-md-6 my-4">
-        <form name="fetchData">
+      <div class="col-md-4 my-4">
+        <form name="fetchData" id="fetchData">
           <div class="form-group">
-            <label for="pwd">Data:</label>
-            <input type="submit" class="form-control btn btn-lg btn-dark btn-sm" id="pwd" value="Update/Fetch twitter data">
+            <label for="fetchDataSubmit">Data:</label>
+            <input type="submit" name="fetchDataSubmit" class="form-control btn btn-lg btn-dark btn-sm" id="fetchDataSubmit" value="Update/Fetch twitter data">
           </div>
-      </form>
+        </form>
       </div>
     </div>
 
     <div class="row">
-      <div class="col-md-6 my-4">
+      <div class="col-md-4 my-4">
         <form action="/articlepreview" method="post">
         <div class="form-group">
           <label for="title">Generate a blog post:</label>

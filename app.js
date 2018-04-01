@@ -373,7 +373,10 @@ app.post('/articlepreview', isLoggedIn, [
 	});
 });
 
-app.post('/submitpost', isLoggedIn, )
+app.post('/dashboard', isLoggedIn, function(req, res) {
+	console.log(req.body);
+	res.send(req.body);
+});
 
 app.post('/deleteUser', isLoggedIn, function(req, res){
   // Perhaps also remove all blog posts by this user as well.

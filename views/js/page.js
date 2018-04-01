@@ -1,3 +1,25 @@
+
+
+$(function () {
+  $('#fetchData').on('submit', function (e) {
+    console.log("pressed submit");
+    e.preventDefault();
+    $('#fetchDataSubmit').prop("disabled", true);
+    $('#fetchDataSubmit').val('Please wait');
+    $.ajax({
+      type: 'POST',
+      url: 'http://localhost:5000/dashboard',
+      data: { form: "fetchData" },
+      success: function (data) {
+        $('#fetchDataSubmit').prop("disabled", false);
+        $('#fetchDataSubmit').val('Update/Fetch twitter data');
+        alert(JSON.stringify(data));
+    }
+  });
+  });
+
+});
+
 /*
 $(document).ready(function() {
   $('#home').click(function (e) {
