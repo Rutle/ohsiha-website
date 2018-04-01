@@ -23,6 +23,7 @@ module.exports = function(passport) {
 
   /* serializeUser
      Serialize authenticated user into the sessions by ID.
+     
   */
   passport.serializeUser(function(user, done) {
     console.log("serializeUser called", user.id);

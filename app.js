@@ -167,17 +167,47 @@ app.get('/profileUpdated', isLoggedIn, function(req, res) {
 });
 
 app.get('/dashboard', isLoggedIn, function(req, res) {
-	console.log(req);
 	var twitterLink = true;
+	var dataAvailable = true;
 	if (req.user.twitter.token === undefined) {
 		twitterLink = false;
 	}
-	res.render('dashboard', {
-		userIsLogged: (req.user ? true : false),
-		user: req.user,
-		isTwitterLinked: twitterLink
-	})
-})
+	console.log(req.session.twitterDataAvailable);
+	// To reduce database calls we add information to session data about twitter
+	// data availability.
+	if (req.session.twitterDataAvailable === undefined || req.session.twitterDataAvailable === "false") {
+		TwitterData.findOne({'author': req.user._id}, function(err, tweetData) {
+			if (err) {
+				return done(err);
+			}
+			// Didn't find document by user.
+			if(!tweetData) {
+				dataAvailable = false;
+				req.session.twitterDataAvailable = "false";
+				console.log("No twitter data.");
+			// New document
+			} else {
+				console.log("Twitter data is available");
+				req.session.twitterDataAvailable = "true";
+			}
+			res.render('dashboard', {
+				userIsLogged: (req.user ? true : false),
+				user: req.user,
+				isTwitterLinked: twitterLink,
+				isDataAvailable: dataAvailable
+			});
+		});
+	} else {
+		console.log("skipped find");
+		res.render('dashboard', {
+			userIsLogged: (req.user ? true : false),
+			user: req.user,
+			isTwitterLinked: twitterLink,
+			isDataAvailable: (req.session.twitterDataAvailable == "true")
+		});
+	}
+
+});
 
 // Twitter Routes
 // Authentication
@@ -252,11 +282,6 @@ app.post('/login', passport.authenticate('local-login', {
   failureRedirect : '/login', // redirect back to the signup page if there is an error
   failureFlash : true // allow flash messages
 	})
-	// Gets called if auth was success, however, with redirect skips this part
-	//,
-	//function(req, res) {
-
-	//}
 );
 
 // Handles submitted signup form. (POST)

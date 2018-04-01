@@ -42,23 +42,26 @@
 
     <div class="row">
       <div class="col-md-5">
-        {{#if isTwitterLinked}}
         <div class="row justify-content-center">
           <div class="col-md-10 mt-2">
+            {{#if isTwitterLinked}}
+            <div class="alert alert-success" role="alert">
+              Data is available for a post generation.
+            </div>
+            {{else}}
             <div class="alert alert-warning" role="alert">
               Please link your twitter account to be able to fetch twitter data and generate posts!
             </div>
+            {{/if}}
           </div>
         </div>
-        {{else}}
 
-        {{/if}}
         <div class="row justify-content-center">
           <div class="col-md-10 mt-2">
             <form name="fetchData" id="fetchData">
               <div class="form-group">
                 <label for="fetchDataSubmit">Data:</label>
-                <input {{#if isTwitterLinked}}disabled{{else}}{{/if}} type="submit" name="fetchDataSubmit" class="form-control btn btn-lg btn-dark btn-sm" id="fetchDataSubmit" value="Update/Fetch twitter data">
+                <input {{#if isTwitterLinked}}{{else}}disabled{{/if}} type="submit" name="fetchDataSubmit" class="form-control btn btn-lg btn-dark btn-sm" id="fetchDataSubmit" value="Update/Fetch twitter data">
               </div>
             </form>
           </div>
@@ -69,7 +72,7 @@
             <form action="/articlepreview" method="post">
             <div class="form-group">
               <label for="title">Generate a blog post:</label>
-              <input {{#if isTwitterLinked}}disabled{{else}}{{/if}} type="submit" class="form-control btn btn-lg btn-dark btn-sm" name="title" id="title" value="Generate">
+              <input {{#if isDataAvailable}}{{else}}disabled{{/if}} type="submit" class="form-control btn btn-lg btn-dark btn-sm" name="title" id="title" value="Generate">
             </div>
           </form>
           </div>
