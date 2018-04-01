@@ -167,6 +167,7 @@ app.get('/profileUpdated', isLoggedIn, function(req, res) {
 });
 
 app.get('/dashboard', isLoggedIn, function(req, res) {
+	console.log(req);
 	var twitterLink = true;
 	if (req.user.twitter.token === undefined) {
 		twitterLink = false;
@@ -380,9 +381,35 @@ app.post('/dashboard', isLoggedIn, function(req, res) {
 	var tweets = [];
 	if (req.body.form === "fetchData") {
 		twit.getTweets(req.user.twitter.id, 3, function(err, result) {
-			
-			console.log("tweets:", result);
-			res.send(JSON.stringify(tweets));
+			TwitterData.findOne({'author': req.user._id}, function(err, tweetData) {
+				if (err)
+					return done(err);
+
+				// Found existing document by the user.
+				if(tweetData) {
+					tweetData.content = result;
+					tweetData.dateModified = new Date();
+					console.log("existing: ", tweetData);
+					tweetData.save(function(err) {
+						if(err) {
+							console.error(err);
+						}
+					});
+				// New document
+				} else {
+					var newTweetData = new TwitterData();
+					newTweetData.author = req.user._id;
+					newTweetData.content = result;
+					console.log("created new: ", newTweetData)
+					newTweetData.save(function(err) {
+						if(err) {
+							console.error(err);
+						}
+					});
+
+				}
+				res.send(JSON.stringify(result));
+			});
 		});
 	}
 });

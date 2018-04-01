@@ -15,7 +15,12 @@ $(function () {
         $('#fetchDataSubmit').prop("disabled", false);
         $('#fetchDataSubmit').val('Update/Fetch twitter data');
         alert(JSON.stringify(data));
-    }
+        $('#fetchDataSubmit').trigger('blur');
+      },
+      error: function(jqXHR, textStatus, err) {
+      //show error message
+      alert('text status '+textStatus+', err '+err)
+      }
   });
   });
 

@@ -18,45 +18,66 @@
 </ul>
 <div class="tab-content" id="dashboardContent">
   <div class="tab-pane fade show active" id="posts" role="tabpanel" aria-labelledby="posts-tab">
-    <div class="col-md-4 my-4">
-      <!-- Blog Post -->
-      <div class="card mb-4">
-        <div class="card-body">
-          <h2 class="card-title">Post Title</h2>
-          <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reiciendis aliquid atque, nulla? Quos cum ex quis soluta, a laboriosam. Dicta expedita corporis animi vero voluptate voluptatibus possimus, veniam magni quis!</p>
-          <a href="#" class="btn btn-lg btn-dark btn-sm">Read More &rarr;</a>
-        </div>
-        <div class="card-footer text-muted">
-          Posted on January 1, 2017 by joku
+    <!-- Posts -->
+    <div class="row">
+      <div class="col-md-4 mt-2">
+        <!-- Blog Post -->
+        <div class="card mb-4">
+          <div class="card-body">
+            <h2 class="card-title">Post Title</h2>
+            <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reiciendis aliquid atque, nulla? Quos cum ex quis soluta, a laboriosam. Dicta expedita corporis animi vero voluptate voluptatibus possimus, veniam magni quis!</p>
+            <a href="#" class="btn btn-lg btn-dark btn-sm">Read More &rarr;</a>
+          </div>
+          <div class="card-footer text-muted">
+            Posted on January 1, 2017 by joku
+          </div>
         </div>
       </div>
     </div>
+    <!-- End posts -->
   </div>
   <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">pro</div>
   <div class="tab-pane fade" id="stats" role="tabpanel" aria-labelledby="stats-tab">Stats</div>
   <div class="tab-pane fade" id="generate" role="tabpanel" aria-labelledby="generate-tab">
 
     <div class="row">
-      <div class="col-md-4 my-4">
-        <form name="fetchData" id="fetchData">
-          <div class="form-group">
-            <label for="fetchDataSubmit">Data:</label>
-            <input type="submit" name="fetchDataSubmit" class="form-control btn btn-lg btn-dark btn-sm" id="fetchDataSubmit" value="Update/Fetch twitter data">
+      <div class="col-md-5">
+        {{#if isTwitterLinked}}
+        <div class="row justify-content-center">
+          <div class="col-md-10 mt-2">
+            <div class="alert alert-warning" role="alert">
+              Please link your twitter account to be able to fetch twitter data and generate posts!
+            </div>
           </div>
-        </form>
+        </div>
+        {{else}}
+
+        {{/if}}
+        <div class="row justify-content-center">
+          <div class="col-md-10 mt-2">
+            <form name="fetchData" id="fetchData">
+              <div class="form-group">
+                <label for="fetchDataSubmit">Data:</label>
+                <input {{#if isTwitterLinked}}disabled{{else}}{{/if}} type="submit" name="fetchDataSubmit" class="form-control btn btn-lg btn-dark btn-sm" id="fetchDataSubmit" value="Update/Fetch twitter data">
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <div class="row justify-content-center">
+          <div class="col-md-8 mt-2">
+            <form action="/articlepreview" method="post">
+            <div class="form-group">
+              <label for="title">Generate a blog post:</label>
+              <input {{#if isTwitterLinked}}disabled{{else}}{{/if}} type="submit" class="form-control btn btn-lg btn-dark btn-sm" name="title" id="title" value="Generate">
+            </div>
+          </form>
+          </div>
+        </div>
+
       </div>
     </div>
 
-    <div class="row">
-      <div class="col-md-4 my-4">
-        <form action="/articlepreview" method="post">
-        <div class="form-group">
-          <label for="title">Generate a blog post:</label>
-          <input type="submit" class="form-control btn btn-lg btn-dark btn-sm" name="title" id="title" value="Generate">
-        </div>
-      </form>
-      </div>
-    </div>
 
   </div>
 </div>
