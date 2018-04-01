@@ -11,26 +11,31 @@ var client = new Twit({
 });
 
 module.exports = {
-  getTweets: function(userID, count) {
+  // Asynchronous function so that when it is used in routes, the response isn't
+  // sent before the data is fetched.
+  getTweets: function(userID, count, callback) {
     var params = {user_id: userID, count: count};
-    var arrayOfTweets = [];
 
     client.get('statuses/user_timeline', params, function(error, tweets, response) {
+      var arrayOfTweets = [];
       if (!error) {
         // Tweets is in the form of an array of objects containing tweet information
         // For example accessing first tweet's text can be done with:
         // >> tweets[0].text
       	for (twiitti of tweets) {
+          console.log(twiitti.text);
           // Clean up text from mentions, URLs and hashtags.
+
           arrayOfTweets.push(
-            twiitti.replace(/\B@[a-z0-9_-]+/gi,'')               // Remove mentions.
+            twiitti.text.replace(/\B@[a-z0-9_-]+/gi,'')               // Remove mentions.
                    .replace(/(?:https?|ftp):\/\/[\n\S]+/g, '')   // Remove URLs.
   				         .replace(/#(\S*)/g, '')                       // Remove hashtags.
   				         .replace(/[\ ,:;-]+/g,' '));                  // Remove unnecessary punctions. Preserve
-                                                                 // period, question mark and exclamation mark.
+                                                                // period, question mark and exclamation mark.
       	}
+
       }
+      callback(null, arrayOfTweets);
     });
-    return arrayOfTweets
   }
 };

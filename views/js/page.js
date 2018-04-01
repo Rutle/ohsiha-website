@@ -9,7 +9,8 @@ $(function () {
     $.ajax({
       type: 'POST',
       url: 'http://localhost:5000/dashboard',
-      data: { form: "fetchData" },
+      data: {form: 'fetchData'},
+      dataType: 'json',
       success: function (data) {
         $('#fetchDataSubmit').prop("disabled", false);
         $('#fetchDataSubmit').val('Update/Fetch twitter data');

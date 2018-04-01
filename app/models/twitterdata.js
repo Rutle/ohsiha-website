@@ -12,7 +12,7 @@ var twitterDataSchema = mongoose.Schema({
   },
   content: [{                               // Array of tweets.
     tweet: String
-  ]},
+  }],
   dateCreated: {                            // Creation date of the document.
     type: Date,
     default: Date.now

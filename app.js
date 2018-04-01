@@ -35,6 +35,9 @@ var Article = require('./app/models/article');
 // User Schema
 var User = require('./app/models/user');
 
+// TwitterData schema
+var TwitterData = require('./app/models/twitterdata')
+
 // Routes
 // var routes = require('./app/routers');
 
@@ -374,8 +377,14 @@ app.post('/articlepreview', isLoggedIn, [
 });
 
 app.post('/dashboard', isLoggedIn, function(req, res) {
-	console.log(req.body);
-	res.send(req.body);
+	var tweets = [];
+	if (req.body.form === "fetchData") {
+		twit.getTweets(req.user.twitter.id, 3, function(err, result) {
+			
+			console.log("tweets:", result);
+			res.send(JSON.stringify(tweets));
+		});
+	}
 });
 
 app.post('/deleteUser', isLoggedIn, function(req, res){
