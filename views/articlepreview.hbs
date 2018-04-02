@@ -1,24 +1,8 @@
 
 <h1 class="my-4">Article preview
 </h1>
-<div class="row justify-content-center">
-  <div class="col-md-6 mt-2">
-  <form action="/articlepreview" method="post">
-    <div class="form-group">
-      <label for="title">Title for the post:</label>
-      <input type="text" class="form-control" id="title" placeholder="{{title}}">
-    </div>
-    <div class="form-group">
-      <label for="author">Author of the post</label>
-      <input type="text" class="form-control" id="author" placeholder="{{user.twitter.displayName}}" disabled>
-    </div>
-    <div class="form-group">
-      <label for="generatedPost">Generated post</label>
-      <textarea class="form-control" id="generatedPost" rows="5" placeholder="{{data}}"></textarea>
-    </div>
-    <button class="btn btn-sm btn-dark" type="submit">Submit</button>
-    <button class="btn btn-sm btn-dark" type="submit">Generate</button>
-    <button class="btn btn-sm btn-dark" type="submit">Cancel</button>
-  </form>
-  </div>
-</div>
+{{#if isSuccess}}
+<h3 class="my-2">Post successfully added.<h3>
+{{else}}
+<h3 class="my-2">Post was not added successfully.<h3>
+{{/if}}

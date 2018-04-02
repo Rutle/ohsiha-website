@@ -13,6 +13,7 @@ var morgan          = require('morgan');
 var cookieParser    = require('cookie-parser');
 var bodyParser      = require('body-parser');
 var session         = require('express-session')
+var helpers 				= require('handlebars-helpers')(['comparison', 'array']);
 
 const exphbs        = require('express-handlebars');
 const hbsHelpers 		= require('./app/hbsHelpers');
@@ -54,7 +55,7 @@ app.engine('.hbs', exphbs({
 	defaultLayout: 'main',
 	extname: '.hbs',
 	layoutsDir: path.join(__dirname, 'views/layouts'),
-	helpers: hbsHelpers,
+	helpers: helpers,
 	partialsDir: ['views/partials']
 }));
 
@@ -174,7 +175,7 @@ app.get('/dashboard', isLoggedIn, function(req, res) {
 	if (req.user.twitter.token === undefined) {
 		twitterLink = false;
 	}
-	console.log(req.session.twitterDataAvailable);
+
 	// To reduce database calls we add information to session data about twitter
 	// data availability.
 	if (req.session.twitterDataAvailable === undefined || req.session.twitterDataAvailable === "false") {
@@ -191,16 +192,29 @@ app.get('/dashboard', isLoggedIn, function(req, res) {
 			} else {
 				console.log("Twitter data is available");
 				req.session.twitterDataAvailable = "true";
+				Article.find({author: req.user._id}, function (err, docs) {
+					var articles = [];
+					for (var i = 0; i < docs.length; i++) {
+						var tempA = {};
+						tempA.title = docs[i].title;
+						tempA.author = req.user.twitter.displayName;
+						tempA.content = docs[i].content;
+						new Date().toDateString()
+						tempA.dateCreated = new Date().toDateString(docs[i].dateCreated);
+						articles.push(tempA);
+					}
+					console.log(articles);
+					res.render('dashboard', {
+						userIsLogged: (req.user ? true : false),
+						user: req.user,
+						isTwitterLinked: twitterLink,
+						isDataAvailable: dataAvailable,
+						articles: articles
+				  })
+			  });
 			}
-			res.render('dashboard', {
-				userIsLogged: (req.user ? true : false),
-				user: req.user,
-				isTwitterLinked: twitterLink,
-				isDataAvailable: dataAvailable
-			});
 		});
 	} else {
-		console.log("skipped find");
 		res.render('dashboard', {
 			userIsLogged: (req.user ? true : false),
 			user: req.user,
@@ -351,33 +365,24 @@ app.post('/profile', isLoggedIn, [
 
 app.post('/articlepreview', isLoggedIn, function(req, res) {
 
-	// matchedData returns only the subset of data validated by the middleware
-	const postData = matchedData(req);
-	console.log(postData);
-	var blogPost = "";
-	var title = "Clever musings.";
+
+	console.log("Article posted!");
+	console.log(req.body.generatedPost);
+	var blogPost = req.body.generatedPost;
+	var title = req.body.title;
 	var dateCreated = new Date();
-	console.log("id ", req.user._id);
+
 	User.findById(req.user._id, function(err, user) {
 		if(err) {
 			return next(err);
 		}
-		console.log(user);
-		// Article consists of:
-		/*
-		author
-		title
-		content
-		dateCreated
-		dateModified
-		comments: [author, dateCreated]
-		*/
 
 		var newArticle = new Article();
 		newArticle.author = user._id;
 		newArticle.title = title;
-		newArticle.content = "Testi";
+		newArticle.content = blogPost;
 		var dateCreated = new Date(newArticle.dateCreated);
+
 		// Add a new article into database.
 		newArticle.save(function(err) {
 			if(err) {
@@ -392,9 +397,6 @@ app.post('/articlepreview', isLoggedIn, function(req, res) {
 		isSuccess: true,
 		userIsLogged: (req.user ? true : false),
 		user: req.user,
-		blogPost: blogPost,
-		title: title,
-		dateCreated: dateCreated.toDateString()
 	});
 });
 
@@ -460,17 +462,8 @@ app.post('/dashboard', isLoggedIn, function(req, res, next) {
 						data: data,
 						author: req.user.twitter.displayName
 					});
-					/*
-					res.render('articlepreview', {
-						userIsLogged: (req.user ? true : false),
-						user: req.user,
-						title: "Clever musings.",
-						dateCreated: new Date().toDateString(),
-						data: data
-					});
-					*/
-					})
-				}
+				})
+			}
 		});
 	}
 });
@@ -487,6 +480,7 @@ app.post('/deleteUser', isLoggedIn, function(req, res){
 	req.logout();
 	res.redirect('/');
 });
+
 // Check if user is logged in with a middleware
 function isLoggedIn(req, res, next) {
     if (req.isAuthenticated())

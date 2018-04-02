@@ -45,9 +45,9 @@ $(function () {
         console.log("title: ", data.title);
         console.log(JSON.stringify(data));
         $('#gAlertMessage').empty();
-        $('#title').attr('placeholder', data.title);
-        $('#author').attr('placeholder', data.author);
-        $('#generatedPost').attr('placeholder', data.data);
+        $('#title').attr('value', data.title);
+        $('#author').attr('value', data.author);
+        $('#generatedPost').val(data.data);
         $('#articlepreview').removeAttr('hidden');
         $('#generatePostSubmit').val('Generate');
         $('#generatePostSubmit').prop('disabled', false);
