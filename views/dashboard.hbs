@@ -45,7 +45,7 @@
         <div class="row justify-content-center">
           <div class="col-md-10 mt-2">
             {{#if isTwitterLinked}}
-            <div class="alert alert-success" role="alert">
+            <div class="alert alert-success" role="alert" id="alertMessage">
               Data is available for a post generation.
             </div>
             {{else}}
@@ -69,7 +69,10 @@
 
         <div class="row justify-content-center">
           <div class="col-md-10 mt-2">
-            <form action="/dashboard" method="post" name="generatePost" id="generatePost">
+            <div class="alert alert-danger" role="alert" id="gAlertMessage" hidden></div>
+          </div>
+          <div class="col-md-10 mt-2">
+            <form name="generatePost" id="generatePost">
             <div class="form-group">
               <label for="generatePost">Generate a blog post:</label>
               <input {{#if isDataAvailable}}{{else}}disabled{{/if}} type="submit" class="form-control btn btn-dark btn-sm" name="generatePostSubmit" id="generatePostSubmit" value="Generate">
@@ -78,6 +81,9 @@
           </div>
         </div>
 
+      </div>
+      <div class="col-md-7" id="articlepreview" hidden>
+        {{> articlepreview}}
       </div>
     </div>
 

@@ -29,7 +29,7 @@ $(function () {
       }
     });
   });
-  /*
+
   $('#generatePost').on('submit', function(e) {
     e.preventDefault();
 
@@ -39,11 +39,40 @@ $(function () {
     $.ajax({
       type: 'POST',
       url: 'http://localhost:5000/dashboard',
-      data: {form: 'generatePost'}
+      data: {form: 'generatePost'},
+      dataType: 'json',
+      success: function(data) {
+        console.log("title: ", data.title);
+        console.log(JSON.stringify(data));
+        $('#gAlertMessage').empty();
+        $('#title').attr('placeholder', data.title);
+        $('#author').attr('placeholder', data.author);
+        $('#generatedPost').attr('placeholder', data.data);
+        $('#articlepreview').removeAttr('hidden');
+        $('#generatePostSubmit').val('Generate');
+        $('#generatePostSubmit').prop('disabled', false);
+        $('#generatePostSubmit').trigger('blur');
+      },
+      error: function(jqXHR, textStatus, errorThrown, data) {
+        console.log(errorThrown);
+        console.log(jqXHR);
+        console.log(textStatus);
+        console.log(jqXHR.responseText);
+        $('#gAlertMessage').empty();
+        $('#gAlertMessage').removeAttr('hidden');
+        $('#gAlertMessage').text(jqXHR.responseText);
+      }
     })
 
   })
-  */
+  $('#cancelBtn').on('click', function(e) {
+    e.preventDefault();
 
+    $('#title').attr('placeholder', "");
+    $('#author').attr('placeholder', "");
+    $('#generatedPost').attr('placeholder', "");
+    $('#articlepreview').attr('hidden', true);
+
+  })
 
 });

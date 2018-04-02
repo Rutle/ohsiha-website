@@ -435,24 +435,32 @@ app.post('/dashboard', isLoggedIn, function(req, res, next) {
 				res.send(JSON.stringify(result));
 			});
 		});
-	} else if (req.body.generatePostSubmit) {
+	} else if (req.body.form === "generatePost") {
 		TwitterData.findOne({'author': req.user._id}, function(err, tweetData) {
+			console.log("tanne")
 			if (err) {
 				return next(err);
 			}
 			if (!tweetData) {
-				return res.send(JSON.stringify({'error': "No data found."}))
+				return res.status(500).send('There was not enough data to generate a post.');
 			} else {
 				markovGen.getSentences(tweetData.content, 2, function(err, result) {
 					if (err) {
-						return res.send(JSON.stringify("error:", "NODATA"));
+						return res.status(500).send('There was not enough data to generate a post.');
 					}
 					var data = "";
 					for (var i = 0; i < 2; i++) {
 						console.log("postaus: ", result[i].string);
 				    data += result[i].string + " ";
 				  }
-
+					return res.status(200).send({
+						userIsLogged: (req.user ? true : false),
+						title: "Clever musings.",
+						dateCreated: new Date().toDateString(),
+						data: data,
+						author: req.user.twitter.displayName
+					});
+					/*
 					res.render('articlepreview', {
 						userIsLogged: (req.user ? true : false),
 						user: req.user,
@@ -460,6 +468,7 @@ app.post('/dashboard', isLoggedIn, function(req, res, next) {
 						dateCreated: new Date().toDateString(),
 						data: data
 					});
+					*/
 					})
 				}
 		});
