@@ -90,15 +90,15 @@ app.get('/', function(req, res) {
 	});
 });
 
-// Possible Admin page.
+// Possible Admin page. (Maybe once I integrate this to my own website.)
 app.get('/admin', isLoggedIn, function(req, res) {
 	if(req.user.rights === "Admin") {
-		return res.render('admin', {
+		res.render('admin', {
 			user: req.user,
 			userIsLogged: (req.user ? true : false)
 		});
 	} else {
-		return res.render('home', {
+		res.render('home', {
 			user:req.user,
 			userIsLogged: (req.user ? true : false)
 		});
@@ -144,6 +144,7 @@ app.get('/login', function(req, res){
 		userIsLogged : (req.user ? true : false)
   });
 });
+
 // Signup route
 app.get('/signup', function(req, res){
 	var signupMessage = req.flash('signupMessage');
@@ -166,6 +167,7 @@ app.get('/profileUpdated', isLoggedIn, function(req, res) {
   });
 });
 
+// Dashboard route
 app.get('/dashboard', isLoggedIn, function(req, res) {
 	var twitterLink = true;
 	var dataAvailable = true;
@@ -178,7 +180,7 @@ app.get('/dashboard', isLoggedIn, function(req, res) {
 	if (req.session.twitterDataAvailable === undefined || req.session.twitterDataAvailable === "false") {
 		TwitterData.findOne({'author': req.user._id}, function(err, tweetData) {
 			if (err) {
-				return done(err);
+				return next(err);
 			}
 			// Didn't find document by user.
 			if(!tweetData) {
@@ -240,7 +242,8 @@ app.post('/connect/local', passport.authenticate('local-signup', {
 	failureRedirect: '/connect/local',
 	failureFlash: true
 }));
-// send to twitter to do the authentication
+
+// send to twitter passport to do the authentication
 app.get('/connect/twitter', passport.authorize('twitter', { scope : 'email' }));
 
 // handle the callback after twitter has authorized the user
@@ -314,12 +317,13 @@ app.post('/profile', isLoggedIn, [
 	const userData = matchedData(req);
 	User.findOne({'local.email': req.user.local.email}, function(err, user) {
 		if(err) {
-			return done(err);
+			return next(err);
 		}
 		console.log(req.body.password)
 		user.comparePassword(req.body.password, function(err, isMatch) {
 			if (err) {
 				console.log(err);
+				return next(err);
 			} else {
 				// Modify user's information acquired from the form.
 				if (!(req.body.fname === "")) {
@@ -332,6 +336,7 @@ app.post('/profile', isLoggedIn, [
 				user.save(function (err) {
 					if(err) {
 						console.error(err);
+						return next(err);
 					}
 				});
 			}
@@ -343,19 +348,9 @@ app.post('/profile', isLoggedIn, [
 	});
 });
 
-app.post('/articlepreview', isLoggedIn, [
-	check('numTweets').exists().not().isEmpty(),
-	check('title').exists().trim(),
-], function(req, res) {
-	const errors = validationResult(req);
-	if (!errors.isEmpty()) {
-		return res.render('articlepreview', {
-			isSuccess: false,
-			errors: errors.mapped(),
-			userIsLogged: (req.user ? true : false),
-			user: req.user
-		});
-	}
+
+app.post('/articlepreview', isLoggedIn, function(req, res) {
+
 	// matchedData returns only the subset of data validated by the middleware
 	const postData = matchedData(req);
 	console.log(postData);
@@ -365,7 +360,7 @@ app.post('/articlepreview', isLoggedIn, [
 	console.log("id ", req.user._id);
 	User.findById(req.user._id, function(err, user) {
 		if(err) {
-			return done(err);
+			return next(err);
 		}
 		console.log(user);
 		// Article consists of:
@@ -387,6 +382,7 @@ app.post('/articlepreview', isLoggedIn, [
 		newArticle.save(function(err) {
 			if(err) {
 				console.error(err);
+				return next(err);
 			}
 		});
 
@@ -402,22 +398,24 @@ app.post('/articlepreview', isLoggedIn, [
 	});
 });
 
-app.post('/dashboard', isLoggedIn, function(req, res) {
+app.post('/dashboard', isLoggedIn, function(req, res, next) {
 	var tweets = [];
+
 	if (req.body.form === "fetchData") {
 		twit.getTweets(req.user.twitter.id, 3, function(err, result) {
 			TwitterData.findOne({'author': req.user._id}, function(err, tweetData) {
 				if (err)
-					return done(err);
+					return next(err);
 
 				// Found existing document by the user.
-				if(tweetData) {
+				if (tweetData) {
 					tweetData.content = result;
 					tweetData.dateModified = new Date();
 					console.log("existing: ", tweetData);
 					tweetData.save(function(err) {
 						if(err) {
 							console.error(err);
+							return next(err);
 						}
 					});
 				// New document
@@ -429,12 +427,41 @@ app.post('/dashboard', isLoggedIn, function(req, res) {
 					newTweetData.save(function(err) {
 						if(err) {
 							console.error(err);
+							return next(err);
 						}
 					});
 
 				}
 				res.send(JSON.stringify(result));
 			});
+		});
+	} else if (req.body.generatePostSubmit) {
+		TwitterData.findOne({'author': req.user._id}, function(err, tweetData) {
+			if (err) {
+				return next(err);
+			}
+			if (!tweetData) {
+				return res.send(JSON.stringify({'error': "No data found."}))
+			} else {
+				markovGen.getSentences(tweetData.content, 2, function(err, result) {
+					if (err) {
+						return res.send(JSON.stringify("error:", "NODATA"));
+					}
+					var data = "";
+					for (var i = 0; i < 2; i++) {
+						console.log("postaus: ", result[i].string);
+				    data += result[i].string + " ";
+				  }
+
+					res.render('articlepreview', {
+						userIsLogged: (req.user ? true : false),
+						user: req.user,
+						title: "Clever musings.",
+						dateCreated: new Date().toDateString(),
+						data: data
+					});
+					})
+				}
 		});
 	}
 });
@@ -443,7 +470,7 @@ app.post('/deleteUser', isLoggedIn, function(req, res){
   // Perhaps also remove all blog posts by this user as well.
 	User.findByIdAndRemove({ _id: req.user._id }, function(err, user) {
 		if(err) {
-			return done(err);
+			return next(err);
 		} else {
 			console.log("user removed");
 		}

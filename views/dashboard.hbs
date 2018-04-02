@@ -61,18 +61,18 @@
             <form name="fetchData" id="fetchData">
               <div class="form-group">
                 <label for="fetchDataSubmit">Data:</label>
-                <input {{#if isTwitterLinked}}{{else}}disabled{{/if}} type="submit" name="fetchDataSubmit" class="form-control btn btn-lg btn-dark btn-sm" id="fetchDataSubmit" value="Update/Fetch twitter data">
+                <input {{#if isTwitterLinked}}{{else}}disabled{{/if}} type="submit" name="fetchDataSubmit" class="form-control btn btn-dark btn-sm" id="fetchDataSubmit" value="Update/Fetch twitter data">
               </div>
             </form>
           </div>
         </div>
 
         <div class="row justify-content-center">
-          <div class="col-md-8 mt-2">
-            <form action="/articlepreview" method="post">
+          <div class="col-md-10 mt-2">
+            <form action="/dashboard" method="post" name="generatePost" id="generatePost">
             <div class="form-group">
-              <label for="title">Generate a blog post:</label>
-              <input {{#if isDataAvailable}}{{else}}disabled{{/if}} type="submit" class="form-control btn btn-lg btn-dark btn-sm" name="title" id="title" value="Generate">
+              <label for="generatePost">Generate a blog post:</label>
+              <input {{#if isDataAvailable}}{{else}}disabled{{/if}} type="submit" class="form-control btn btn-dark btn-sm" name="generatePostSubmit" id="generatePostSubmit" value="Generate">
             </div>
           </form>
           </div>
