@@ -403,6 +403,8 @@ app.post('/articlepreview', isLoggedIn, function(req, res) {
 app.post('/dashboard', isLoggedIn, function(req, res, next) {
 	var tweets = [];
 
+	// Catch generate and fetch/update data ajax calls
+  // Fetch/update button.
 	if (req.body.form === "fetchData") {
 		twit.getTweets(req.user.twitter.id, 3, function(err, result) {
 			TwitterData.findOne({'author': req.user._id}, function(err, tweetData) {
@@ -437,14 +439,14 @@ app.post('/dashboard', isLoggedIn, function(req, res, next) {
 				res.send(JSON.stringify(result));
 			});
 		});
+		// Generate button
 	} else if (req.body.form === "generatePost") {
 		TwitterData.findOne({'author': req.user._id}, function(err, tweetData) {
-			console.log("tanne")
 			if (err) {
 				return next(err);
 			}
 			if (!tweetData) {
-				return res.status(500).send('There was not enough data to generate a post.');
+				return res.status(500).send('There was no data to generate a post.');
 			} else {
 				markovGen.getSentences(tweetData.content, 2, function(err, result) {
 					if (err) {
@@ -452,7 +454,7 @@ app.post('/dashboard', isLoggedIn, function(req, res, next) {
 					}
 					var data = "";
 					for (var i = 0; i < 2; i++) {
-						console.log("postaus: ", result[i].string);
+						// console.log("postaus: ", result[i].string);
 				    data += result[i].string + " ";
 				  }
 					return res.status(200).send({

@@ -1,12 +1,16 @@
 swagger: "2.0"
 info:
+  description: "This is API for Ohjelmallien sisällönhallinta project website."
   version: "0.0.1"
-  title: Hello World App
+  title: "Markov chain blogpost website API."
+  contact:
+    email: "jussi.m.ristimaki@student.tut.fi"
+
 # during dev, should point to your local machine
 host: localhost:10010
-# basePath prefixes all resource paths 
-basePath: /
-# 
+# basePath prefixes all resource paths
+basePath: /v2/
+#
 schemes:
   # tip: remove http to make production-grade
   - http
@@ -18,25 +22,43 @@ consumes:
 produces:
   - application/json
 paths:
-  /hello:
+  /users:
     # binds a127 app logic to a route
-    x-swagger-router-controller: hello_world
+    x-swagger-router-controller: users
     get:
-      description: Returns 'Hello' to the caller
+      description: Lists all users on the website
       # used as the method name of the controller
-      operationId: hello
-      parameters:
-        - name: name
-          in: query
-          description: The name of the person to whom to say hello
-          required: false
-          type: string
+      operationId: users
       responses:
         "200":
           description: Success
           schema:
             # a pointer to a definition
-            $ref: "#/definitions/HelloWorldResponse"
+            $ref: "#/definitions/UserList"
+        # responses may fall through to errors
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /users/{userID}:
+    # binds a127 app logic to a route
+    x-swagger-router-controller: users
+    get:
+      description: Fetch information on a user based on ID.
+      # used as the method name of the controller
+      operationId: getUserById
+      parameters:
+        - name: userID
+          in: path
+          description: ID of the user to get.
+          required: true
+          type: integer
+      responses:
+        "200":
+          description: Success
+          schema:
+            # a pointer to a definition
+            $ref: "#/definitions/User"
         # responses may fall through to errors
         default:
           description: Error
@@ -46,12 +68,16 @@ paths:
     x-swagger-pipe: swagger_raw
 # complex objects have schema definitions
 definitions:
-  HelloWorldResponse:
-    required:
-      - message
+  UserList:
+    type: "array"
+    items:
+      $ref: "#/definitions/User"
+  User:
+    type: "object"
     properties:
-      message:
-        type: string
+      id:
+        type: strings
+        description: Display name of Twitter.
   ErrorResponse:
     required:
       - message
