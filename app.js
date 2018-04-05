@@ -43,7 +43,10 @@ var TwitterData = require('./app/models/twitterdata')
 // var routes = require('./app/routers');
 
 // Connection to database.
-mongoose.connect('mongodb://localhost');
+// Here we find an appropriate database to connect to, defaulting to
+// localhost if we don't find one.
+var uristring = process.env.MONGODB_URI || 'mongodb://localhost';
+mongoose.connect(uristring);
 
 // Configure passport with strageties to handle authentications.
 require('./app/passport')(passport);
