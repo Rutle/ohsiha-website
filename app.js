@@ -1,6 +1,7 @@
 // app.js
 
 'use strict';
+require('dotenv').config();
 var mongoose        = require('mongoose');
 var SwaggerExpress  = require('swagger-express-mw');
 var swaggerUi       = require('swagger-ui-express');
