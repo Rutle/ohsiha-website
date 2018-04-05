@@ -76,8 +76,11 @@ definitions:
     type: "object"
     properties:
       id:
-        type: strings
+        type: string
         description: Display name of Twitter.
+      name:
+        type: string
+        description: Name of user
   ErrorResponse:
     required:
       - message
