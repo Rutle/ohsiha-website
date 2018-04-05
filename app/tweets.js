@@ -2,11 +2,18 @@
 // Purpose of this file is to make connection to twitter API and get an array of
 // tweets.
 var Twit      = require('twit');
+/*
 var authData  = require('./auth');
 
 var client = new Twit({
   consumer_key:         authData.twitterAuth.consumerKey,
   consumer_secret:      authData.twitterAuth.consumerSecret,
+  app_only_auth:        true
+});
+*/
+var client = new Twit({
+  consumer_key:         process.env.TWITTER_CON_KEY,
+  consumer_secret:      process.env.TWITTER_CON_SECRET,
   app_only_auth:        true
 });
 
