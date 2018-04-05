@@ -16,7 +16,6 @@ var session         = require('express-session')
 var helpers 				= require('handlebars-helpers')(['comparison', 'array']);
 
 const exphbs        = require('express-handlebars');
-const hbsHelpers 		= require('./app/hbsHelpers');
 const path          = require('path');
 const publicPath    = path.join(__dirname, '/views');
 const swaggerDocument = YAML.load('./api/swagger/swagger.yaml');
@@ -46,7 +45,13 @@ var TwitterData = require('./app/models/twitterdata')
 // Here we find an appropriate database to connect to, defaulting to
 // localhost if we don't find one.
 var uristring = process.env.MONGODB_URI || 'mongodb://localhost';
-mongoose.connect(uristring);
+mongoose.connect(uristring, function (err, res) {
+	if (err) {
+		console.log('ERROR connecting to: ' + uristring + '. ' + err);
+	} else {
+		console.log ('Succeeded connected to: ' + uristring);
+	}
+});
 
 // Configure passport with strageties to handle authentications.
 require('./app/passport')(passport);
