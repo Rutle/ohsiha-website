@@ -15,7 +15,7 @@ var LocalStrategy     = require('passport-local').Strategy;
 var TwitterStrategy   = require('passport-twitter').Strategy;
 var User              = require('../app/models/user');
 
-//var authData          = require('./auth');
+var authData          = require('./auth');
 
 module.exports = function(passport) {
   console.log('passport configuraatio');
@@ -117,16 +117,17 @@ module.exports = function(passport) {
 
     // Passport configuration for twitter auth.
     passport.use(new TwitterStrategy({
-        /*
+
         consumerKey: authData.twitterAuth.consumerKey,
         consumerSecret: authData.twitterAuth.consumerSecret,
         callbackURL: authData.twitterAuth.callbackURL,
         passReqToCallback: true
-        */
+        /*
         consumerKey: process.env.TWITTER_CON_KEY,
         consumerSecret: process.env.TWITTER_CON_SECRET,
         callbackURL: 'http://localhost:5000/auth/twitter/callback',
         passReqToCallback: true
+        */
 
     },
     function(req, token, tokenSecret, profile, done) {

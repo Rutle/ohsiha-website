@@ -19,11 +19,14 @@
 <div class="tab-content" id="dashboardContent">
   <div class="tab-pane fade show active" id="posts" role="tabpanel" aria-labelledby="posts-tab">
     <!-- Posts -->
-    <div class="row">
-      <div class="col-md-4 mt-2">
+
         <!-- Blog Post -->
+        {{#if isArticle}}
         {{#withGroup articles 3}}
-          {{#each this}}
+        <div class="row">
+
+          {{#each articles}}
+          <div class="col-md-4 mt-2">
           <div class="card mb-4">
             <div class="card-body">
               <h2 class="card-title">{{title}}</h2>
@@ -34,9 +37,14 @@
               Posted on {{dateCreated}} by {{author}}
             </div>
           </div>
+          </div>
           {{/each}}
+        </div>
         {{/withGroup}}
-      </div>
+        {{else}}
+        no article
+        {{/if}}
+
     </div>
     <!-- End posts -->
   </div>

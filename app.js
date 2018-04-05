@@ -38,6 +38,10 @@ var User = require('./app/models/user');
 // TwitterData schema
 var TwitterData = require('./app/models/twitterdata')
 
+var config = {
+  appRoot: __dirname // required config
+};
+
 // Routes
 // var routes = require('./app/routers');
 
@@ -193,9 +197,22 @@ app.get('/dashboard', isLoggedIn, function(req, res) {
 			}
 			// Didn't find document by user.
 			if(!tweetData) {
-				dataAvailable = false;
 				req.session.twitterDataAvailable = "false";
 				console.log("No twitter data.");
+        Article.find({author: req.user._id}, function (err, article) {
+          var isArticle = true;
+          if(article.length === 0) {
+            isArticle = false;
+          }
+          res.render('dashboard', {
+            userIsLogged: (req.user ? true : false),
+            user: req.user,
+            isTwitterLinked: twitterLink,
+            isDataAvailable: false,
+            isArticle: isArticle
+          })
+        })
+
 			// New document
 			} else {
 				console.log("Twitter data is available");
@@ -500,9 +517,7 @@ function isLoggedIn(req, res, next) {
 
 module.exports = app; // for testing
 
-var config = {
-  appRoot: __dirname // required config
-};
+
 
 /* Swagger configuration */
 SwaggerExpress.create(config, function(err, swaggerExpress) {
