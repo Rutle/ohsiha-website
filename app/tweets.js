@@ -3,20 +3,20 @@
 // tweets.
 var Twit      = require('twit');
 
-var authData  = require('./auth');
-
+//var authData  = require('./auth');
+/*
 var client = new Twit({
   consumer_key:         authData.twitterAuth.consumerKey,
   consumer_secret:      authData.twitterAuth.consumerSecret,
   app_only_auth:        true
 });
-/*
+*/
 var client = new Twit({
   consumer_key:         process.env.TWITTER_CON_KEY,
   consumer_secret:      process.env.TWITTER_CON_SECRET,
   app_only_auth:        true
 });
-*/
+
 module.exports = {
   // Asynchronous function so that when it is used in routes, the response isn't
   // sent before the data is fetched.
