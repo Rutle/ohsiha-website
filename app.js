@@ -257,11 +257,50 @@ app.get('/unlink/twitter', function(req, res) {
 	});
 });
 
+app.get('/article/:articleId', function(req, res, next) {
+  console.log("Artikkelia: ", req.params.articleId, " haetaan");
+  dbf.getArticle(req, function(err, data) {
+    console.log(data);
+
+    if(err) {
+      next(err);
+    }
+    // Couldn't find an article with given ID.
+    if (article.length === 0) {
+      isArticle = false;
+      res.render('fullarticle', {
+        userIsLogged: (req.user ? true : false),
+        user: req.user,
+        articleExists: false
+      });
+    } else {
+      res.render('fullarticle', {
+        userIsLogged: (req.user ? true : false),
+        user: req.user,
+        title: data.title,
+        blogPost: data.content,
+        author: data.fullName,
+        comments: "",
+        dateCreated: data.dateCreated,
+        articleExists: true
+      })
+    }
+
+  });
+});
+
+app.get('/user/:userId', function(req, res, next) {
+  console.log("User: ", req.params.userId, " haettu");
+  dbf.getUser(req, function(err, data) {
+    console.log(data);
+  });
+});
+
 
 // ####	POST	####
+
 // Handles submitted login form. (POST)
 // Use 'local-login' strategy.
-
 app.post('/login', passport.authenticate('local-login', {
   successRedirect : '/profile', // redirect to the secure profile section
   failureRedirect : '/login', // redirect back to the signup page if there is an error

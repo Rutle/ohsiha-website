@@ -3,43 +3,58 @@
 // Database related functions
 
 var mongoose = require('mongoose');
-var Article = require('./models/article')
+var Article = require('./models/article');
+var User = require('./models/user');
 
 module.exports = {
   getArticles: function (req, callback) {
     Article.find({author: req.user._id}, function (err, articles) {
       if (err) {
+          callback(err, null);
+      }
+      User.findOne({'_id': req.user._id}, function(err, user) {
+        if(err) {
+          callback(err, null);
+        }
+        var articlesArray = [];
+        for (var i = 0; i < articles.length; i++) {
+          var tempA = {};
+          tempA.title = articles[i].title;
+          tempA.author = user.fullName;
+          tempA.content = articles[i].content;
+          new Date().toDateString()
+          tempA.dateCreated = new Date().toDateString(articles[i].dateCreated);
+          articlesArray.push(tempA);
+        }
+        callback(null, articlesArray);
+      });
+    });
+  },
+  getArticle: function(req, callback) {
+    Article.findOne({'articleId': req.params.articleId}, function (err, article) {
+      if(err) {
         callback(err, null);
       }
-      var articlesArray = [];
-      for (var i = 0; i < articles.length; i++) {
-        var tempA = {};
-        tempA.title = articles[i].title;
+      console.log("article data: ", typeof(article));
+      callback(null, article);
 
-        // Check what names the user has set on twitter and locally. Use one
-        // of them if missing.
-        if (req.user.twitter.displayName === undefined) {
-          if (req.user.local.firstName === undefined &&
-              req.user.local.lastName === undefined) {
-            tempA.author = "Unknown"
-          } else if (req.user.local.firstName === undefined &&
-                     req.user.local.lastName !== undefined) {
-            tempA.author = req.user.local.lastName
-          } else if (req.user.local.firstName !== undefined &&
-                     req.user.local.lastName === undefined) {
-            tempA.author = req.user.local.firstName
-          } else {
-            tempA.author = req.user.local.firstName+" "+req.user.local.lastName;
-          }
-        } else {
-          tempA.author = req.user.twitter.displayName;
-        }
-        tempA.content = articles[i].content;
-        new Date().toDateString()
-        tempA.dateCreated = new Date().toDateString(articles[i].dateCreated);
-        articlesArray.push(tempA);
+    });
+  },
+  getUser: function(req, callback) {
+    User.findOne({'userId': req.params.userId}, function(err, user) {
+      if(err) {
+        callback(err, null);
       }
-      callback(null, articlesArray);
+      console.log("taysnimi: ", user.fullName)
+      callback(null, user);
+    });
+  },
+  getUserFullName: function(_id, callback) {
+    User.findOne({'_id': _id}, function(err, user) {
+      if(err) {
+        callback(err, null);
+      }
+      callback(null, user.fullName);
     });
   }
 }

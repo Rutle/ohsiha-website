@@ -23,6 +23,10 @@ $(function () {
 		// Remove focus on the submit button.
         $('#fetchDataSubmit').trigger('blur');
         $('#generatePostSubmit').prop('disabled', false);
+        $('#gAlertMessage').text('There is data to generate a post.');
+        $('#gAlertMessage').removeClass('alert-danger');
+        $('#gAlertMessage').addClass('alert-success');
+
       },
       error: function(jqXHR, textStatus, err) {
       // Perhaps send error message from server side and load it into the warning box.

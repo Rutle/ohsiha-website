@@ -18,6 +18,8 @@ module.exports = {
 
     client.get('statuses/user_timeline', params, function(error, tweets, response) {
       var arrayOfTweets = [];
+      var twiitti;  // due to 'use strict'
+
       if (!error) {
         // Tweets is in the form of an array of objects containing tweet information
         // For example accessing first tweet's text can be done with:
