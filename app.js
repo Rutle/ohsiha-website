@@ -24,6 +24,12 @@ const swaggerDocument = YAML.load('./api/swagger/swagger.yaml');
 const { check, validationResult } = require('express-validator/check');
 const { matchedData, sanitize } = require('express-validator/filter');
 
+// Database functions
+var dbf = require('./app/database');
+
+// Databoard route
+var dBoard = require('./app/dashroute');
+
 // Tweets
 var twit = require('./app/tweets');
 
@@ -182,74 +188,7 @@ app.get('/profileUpdated', isLoggedIn, function(req, res) {
 });
 
 // Dashboard route
-app.get('/dashboard', isLoggedIn, function(req, res) {
-	var twitterLink = true;
-	var dataAvailable = true;
-	if (req.user.twitter.token === undefined) {
-		twitterLink = false;
-	}
-
-	// To reduce database calls we add information to session data about twitter
-	// data availability.
-	if (req.session.twitterDataAvailable === undefined || req.session.twitterDataAvailable === "false") {
-		TwitterData.findOne({'author': req.user._id}, function(err, tweetData) {
-			if (err) {
-				return next(err);
-			}
-			// Didn't find document by user.
-			if(!tweetData) {
-				req.session.twitterDataAvailable = "false";
-				console.log("No twitter data.");
-        Article.find({author: req.user._id}, function (err, article) {
-          var isArticle = true;
-          if(article.length === 0) {
-            isArticle = false;
-          }
-          res.render('dashboard', {
-            userIsLogged: (req.user ? true : false),
-            user: req.user,
-            isTwitterLinked: twitterLink,
-            isDataAvailable: false,
-            isArticle: isArticle
-          })
-        })
-
-			// New document
-			} else {
-				console.log("Twitter data is available");
-				req.session.twitterDataAvailable = "true";
-				Article.find({author: req.user._id}, function (err, docs) {
-					var articles = [];
-					for (var i = 0; i < docs.length; i++) {
-						var tempA = {};
-						tempA.title = docs[i].title;
-						tempA.author = req.user.twitter.displayName;
-						tempA.content = docs[i].content;
-						new Date().toDateString()
-						tempA.dateCreated = new Date().toDateString(docs[i].dateCreated);
-						articles.push(tempA);
-					}
-					console.log(articles);
-					res.render('dashboard', {
-						userIsLogged: (req.user ? true : false),
-						user: req.user,
-						isTwitterLinked: twitterLink,
-						isDataAvailable: dataAvailable,
-						articles: articles
-				  })
-			  });
-			}
-		});
-	} else {
-		res.render('dashboard', {
-			userIsLogged: (req.user ? true : false),
-			user: req.user,
-			isTwitterLinked: twitterLink,
-			isDataAvailable: (req.session.twitterDataAvailable == "true")
-		});
-	}
-
-});
+app.get('/dashboard', isLoggedIn, dBoard.getDBoard);
 
 // Twitter Routes
 // Authentication
@@ -266,13 +205,13 @@ app.get('/auth/twitter/callback',
 // Connect twitter and local account
 app.get('/connect/local', function(req, res) {
 	var signupMessage = req.flash('signupMessage');
-	var successMessage = true;
+	var isSuccessMessage = true;
 	if(signupMessage.length > 0) {
-		successMessage = false;
+		isSuccessMessage = false;
 	}
 	res.render('connect-local.hbs', {
 		message: signupMessage,
-		success: successMessage,
+		success: isSuccessMessage,
 		userIsLogged : (req.user ? true : false)
 	});
 });
@@ -426,75 +365,7 @@ app.post('/articlepreview', isLoggedIn, function(req, res) {
 	});
 });
 
-app.post('/dashboard', isLoggedIn, function(req, res, next) {
-	var tweets = [];
-
-	// Catch generate and fetch/update data ajax calls
-  // Fetch/update button.
-	if (req.body.form === "fetchData") {
-		twit.getTweets(req.user.twitter.id, 3, function(err, result) {
-			TwitterData.findOne({'author': req.user._id}, function(err, tweetData) {
-				if (err)
-					return next(err);
-
-				// Found existing document by the user.
-				if (tweetData) {
-					tweetData.content = result;
-					tweetData.dateModified = new Date();
-					console.log("existing: ", tweetData);
-					tweetData.save(function(err) {
-						if(err) {
-							console.error(err);
-							return next(err);
-						}
-					});
-				// New document
-				} else {
-					var newTweetData = new TwitterData();
-					newTweetData.author = req.user._id;
-					newTweetData.content = result;
-					console.log("created new: ", newTweetData)
-					newTweetData.save(function(err) {
-						if(err) {
-							console.error(err);
-							return next(err);
-						}
-					});
-
-				}
-				res.send(JSON.stringify(result));
-			});
-		});
-		// Generate button
-	} else if (req.body.form === "generatePost") {
-		TwitterData.findOne({'author': req.user._id}, function(err, tweetData) {
-			if (err) {
-				return next(err);
-			}
-			if (!tweetData) {
-				return res.status(500).send('There was no data to generate a post.');
-			} else {
-				markovGen.getSentences(tweetData.content, 2, function(err, result) {
-					if (err) {
-						return res.status(500).send('There was not enough data to generate a post.');
-					}
-					var data = "";
-					for (var i = 0; i < 2; i++) {
-						// console.log("postaus: ", result[i].string);
-				    data += result[i].string + " ";
-				  }
-					return res.status(200).send({
-						userIsLogged: (req.user ? true : false),
-						title: "Clever musings.",
-						dateCreated: new Date().toDateString(),
-						data: data,
-						author: req.user.twitter.displayName
-					});
-				})
-			}
-		});
-	}
-});
+app.post('/dashboard', isLoggedIn, dBoard.postDBoard);
 
 app.post('/deleteUser', isLoggedIn, function(req, res){
   // Perhaps also remove all blog posts by this user as well.

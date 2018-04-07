@@ -20,23 +20,22 @@
   <div class="tab-pane fade show active" id="posts" role="tabpanel" aria-labelledby="posts-tab">
     <!-- Posts -->
 
-        <!-- Blog Post -->
         {{#if isArticle}}
         {{#withGroup articles 3}}
         <div class="row">
-
           {{#each articles}}
           <div class="col-md-4 mt-2">
-          <div class="card mb-4">
-            <div class="card-body">
-              <h2 class="card-title">{{title}}</h2>
-              <p class="card-text">{{content}}</p>
-              <a href="#" class="btn btn-lg btn-dark btn-sm">Read More &rarr;</a>
+            <!-- Blog Post -->
+            <div class="card mb-4">
+              <div class="card-body">
+                <h2 class="card-title">{{title}}</h2>
+                <p class="card-text">{{content}}</p>
+                <a href="#" class="btn btn-lg btn-dark btn-sm">Read More &rarr;</a>
+              </div>
+              <div class="card-footer text-muted">
+                Posted on {{dateCreated}} by {{author}}
+              </div>
             </div>
-            <div class="card-footer text-muted">
-              Posted on {{dateCreated}} by {{author}}
-            </div>
-          </div>
           </div>
           {{/each}}
         </div>
@@ -45,7 +44,6 @@
         no article
         {{/if}}
 
-    </div>
     <!-- End posts -->
   </div>
   <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">pro</div>
@@ -58,7 +56,7 @@
           <div class="col-md-10 mt-2">
             {{#if isTwitterLinked}}
             <div class="alert alert-success" role="alert" id="alertMessage">
-              Data is available for a post generation.
+              Twitter is linked for data retrieving.
             </div>
             {{else}}
             <div class="alert alert-warning" role="alert">
@@ -80,9 +78,20 @@
         </div>
 
         <div class="row justify-content-center">
-          <div class="col-md-10 mt-2">
-            <div class="alert alert-danger" role="alert" id="gAlertMessage" hidden></div>
+          <div class="col-md-10 mt-4">
+            {{#if isDataAvailable}}
+            <div class="alert alert-success" role="alert" id="gAlertMessage">
+            There is data to generate a post.
+            </div>
+            {{else}}
+            <div class="alert alert-danger" role="alert" id="gAlertMessage">
+            There is no data retrieved. Please fetch data first.
+            </div>
+            {{/if}}
           </div>
+        </div>
+        <div class="row justify-content-center">
+
           <div class="col-md-10 mt-2">
             <form name="generatePost" id="generatePost">
             <div class="form-group">
@@ -98,7 +107,6 @@
         {{> articlepreview}}
       </div>
     </div>
-
 
   </div>
 </div>
