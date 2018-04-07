@@ -1,9 +1,11 @@
+'use strict';
 // app/models/article.js
 // Javascript file for MongoDB Article-schema intended for storing articles.
 // Useful info: https://alexanderzeitler.com/articles/mongoose-referencing-schema-in-properties-and-arrays/
 // I'm not sure if I should separate the comments into its own Schema.
 
 var mongoose = require('mongoose');
+var autoIncrement = require('simple-mongoose-autoincrement');
 
 // MongoDB schema for an article model.
 var articleSchema = mongoose.Schema({
@@ -41,4 +43,5 @@ var articleSchema = mongoose.Schema({
   }]
 });
 
+articleSchema.plugin(autoIncrement, { field: 'articleId' });
 module.exports = mongoose.model('Article', articleSchema);

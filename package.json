@@ -28,6 +28,7 @@
     "passport-local": "^1.0.0",
     "passport-twitter": "^1.0.4",
     "popper.js": "^1.14.3",
+    "simple-mongoose-autoincrement": "^1.2.1",
     "swagger-express-mw": "^0.7.0",
     "swagger-ui-express": "^3.0.6",
     "twit": "^2.2.9",

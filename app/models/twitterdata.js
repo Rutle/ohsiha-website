@@ -1,7 +1,9 @@
+'use strict';
 // app/models/twitterdata.js
 // Javascript file for MongoDB twitterdata-schema intended for storing twitter data.
 
 var mongoose = require('mongoose');
+var autoIncrement = require('simple-mongoose-autoincrement');
 
 // MongoDB schema for an twitter data model.
 var twitterDataSchema = mongoose.Schema({
@@ -21,4 +23,5 @@ var twitterDataSchema = mongoose.Schema({
   },
 });
 
+twitterDataSchema.plugin(autoIncrement, { field: 'tweetDataId' });
 module.exports = mongoose.model('TweetData', twitterDataSchema);

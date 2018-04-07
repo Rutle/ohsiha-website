@@ -1,15 +1,9 @@
-//app/tweets.js
+'use strict';
+// app/tweets.js
 // Purpose of this file is to make connection to twitter API and get an array of
 // tweets.
 var Twit      = require('twit');
-//var authData  = require('./auth');
-/*
-var client = new Twit({
-  consumer_key:         authData.twitterAuth.consumerKey,
-  consumer_secret:      authData.twitterAuth.consumerSecret,
-  app_only_auth:        true
-});
-*/
+
 var client = new Twit({
   consumer_key:         process.env.TWITTER_CON_KEY,
   consumer_secret:      process.env.TWITTER_CON_SECRET,
@@ -33,11 +27,11 @@ module.exports = {
           // Clean up text from mentions, URLs and hashtags.
 
           arrayOfTweets.push(
-            twiitti.text.replace(/\B@[a-z0-9_-]+/gi,'')               // Remove mentions.
+            twiitti.text.replace(/\B@[a-z0-9_-]+/gi,'')          // Remove mentions.
                    .replace(/(?:https?|ftp):\/\/[\n\S]+/g, '')   // Remove URLs.
   				         .replace(/#(\S*)/g, '')                       // Remove hashtags.
   				         .replace(/[\ ,:;-]+/g,' '));                  // Remove unnecessary punctions. Preserve
-                                                                // period, question mark and exclamation mark.
+                                                                 // period, question mark and exclamation mark.
       	}
 
       }

@@ -1,3 +1,4 @@
+'use strict';
 const Markov = require('markov-strings');
 
 module.exports = {

@@ -1,3 +1,4 @@
+'use strict';
 // app/passport.js
 
 // Purpose of this file is to configure our Passport strategies.

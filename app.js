@@ -1,7 +1,7 @@
 // app.js
 
 'use strict';
-require('dotenv').config();
+require('dotenv').config(); // Provides ability to use 'process.env.X' locally
 var mongoose        = require('mongoose');
 var SwaggerExpress  = require('swagger-express-mw');
 var swaggerUi       = require('swagger-ui-express');
@@ -13,7 +13,7 @@ var flash           = require('connect-flash');
 var morgan          = require('morgan');
 var cookieParser    = require('cookie-parser');
 var bodyParser      = require('body-parser');
-var session         = require('express-session')
+var session         = require('express-session');
 var helpers 				= require('handlebars-helpers')(['comparison', 'array']);
 
 const exphbs        = require('express-handlebars');
@@ -23,6 +23,19 @@ const swaggerDocument = YAML.load('./api/swagger/swagger.yaml');
 
 const { check, validationResult } = require('express-validator/check');
 const { matchedData, sanitize } = require('express-validator/filter');
+
+// Connection to database.
+// Here we find an appropriate database to connect to, defaulting to
+// localhost if we don't find one.
+
+var uristring = process.env.MONGODB_URI || 'mongodb://localhost';
+mongoose.connect(uristring, function (err, res) {
+	if (err) {
+		console.log('ERROR connecting to: ' + uristring + '. ' + err);
+	} else {
+		console.log ('Succeeded connected to: ' + uristring);
+	}
+});
 
 // Database functions
 var dbf = require('./app/database');
@@ -34,7 +47,7 @@ var dBoard = require('./app/dashroute');
 var twit = require('./app/tweets');
 
 // Markov
-var markovGen = require('./app/markovgen')
+var markovGen = require('./app/markovgen');
 
 // Article Schema
 var Article = require('./app/models/article');
@@ -43,7 +56,7 @@ var Article = require('./app/models/article');
 var User = require('./app/models/user');
 
 // TwitterData schema
-var TwitterData = require('./app/models/twitterdata')
+var TwitterData = require('./app/models/twitterdata');
 
 var config = {
   appRoot: __dirname // required config
@@ -52,17 +65,6 @@ var config = {
 // Routes
 // var routes = require('./app/routers');
 
-// Connection to database.
-// Here we find an appropriate database to connect to, defaulting to
-// localhost if we don't find one.
-var uristring = process.env.MONGODB_URI || 'mongodb://localhost';
-mongoose.connect(uristring, function (err, res) {
-	if (err) {
-		console.log('ERROR connecting to: ' + uristring + '. ' + err);
-	} else {
-		console.log ('Succeeded connected to: ' + uristring);
-	}
-});
 
 // Configure passport with strageties to handle authentications.
 require('./app/passport')(passport);
@@ -259,6 +261,7 @@ app.get('/unlink/twitter', function(req, res) {
 // ####	POST	####
 // Handles submitted login form. (POST)
 // Use 'local-login' strategy.
+
 app.post('/login', passport.authenticate('local-login', {
   successRedirect : '/profile', // redirect to the secure profile section
   failureRedirect : '/login', // redirect back to the signup page if there is an error
@@ -329,7 +332,6 @@ app.post('/profile', isLoggedIn, [
 
 
 app.post('/articlepreview', isLoggedIn, function(req, res) {
-
 
 	console.log("Article posted!");
 	console.log(req.body.generatedPost);

@@ -1,3 +1,4 @@
+'use strict';
 // ./app/dashroute.js
 // Route file for dashboard page.
 
@@ -22,16 +23,18 @@ exports.getDBoard = function(req, res){
 			if (err) {
 				return next(err);
 			}
-			// Didn't find document by user.
+			// Didn't find a document by user.
 			if(!tweetData) {
 				req.session.twitterDataAvailable = "false";
         dataAvailable = false;
 				console.log("No twitter data.");
+      // A document was found.
       } else {
 				req.session.twitterDataAvailable = "true";
         dataAvailable = true;
         console.log("Twitter data is available");
 			}
+      // Fetch articles created by user.
       dbf.getArticles(req, function(err, articles) {
         if (articles.length === 0) {
           isArticle = false;
@@ -50,6 +53,7 @@ exports.getDBoard = function(req, res){
   // Session variable twitterDataAvailable is false:
   } else if (req.session.twitterDataAvailable === "false") {
     dataAvailable = false;
+    // Fetch articles created by user.
     dbf.getArticles(req, function(err, articles) {
       if (articles.length === 0) {
         isArticle = false;
@@ -67,6 +71,7 @@ exports.getDBoard = function(req, res){
   // Session variable twitterDataAvailable is true:
 	} else {
     console.log("session dataAvailable on true");
+    // Fetch articles created by user.
     dbf.getArticles(req, function(err, articles) {
       if (articles.length === 0) {
         isArticle = false;
@@ -122,7 +127,7 @@ exports.postDBoard = function(req, res, next) {
           });
 
         }
-        // Add information to session that data is twitter data is available.
+        // Add information to session that twitter data is available.
         req.session.twitterDataAvailable = "true";
         res.send(JSON.stringify(result));
       });

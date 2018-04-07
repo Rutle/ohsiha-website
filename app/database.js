@@ -1,8 +1,10 @@
+'use strict';
 // batabase.js
 // Database related functions
 
 var mongoose = require('mongoose');
 var Article = require('./models/article')
+
 module.exports = {
   getArticles: function (req, callback) {
     Article.find({author: req.user._id}, function (err, articles) {
@@ -13,6 +15,9 @@ module.exports = {
       for (var i = 0; i < articles.length; i++) {
         var tempA = {};
         tempA.title = articles[i].title;
+
+        // Check what names the user has set on twitter and locally. Use one
+        // of them if missing.
         if (req.user.twitter.displayName === undefined) {
           if (req.user.local.firstName === undefined &&
               req.user.local.lastName === undefined) {

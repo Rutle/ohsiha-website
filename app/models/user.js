@@ -1,9 +1,11 @@
+'use strict';
 // app/models/user.js
 // Javascript file for MongoDB User-schema intended for storing user information.
 
 // Require 'mongoose' to get the needed schema object for user model.
 var mongoose = require('mongoose');
 var bcrypt   = require('bcrypt-nodejs');
+var autoIncrement = require('simple-mongoose-autoincrement');
 
 // MongoDB schema for user model that is used for storing data to the MongoDB.
 var userSchema = mongoose.Schema({
@@ -42,4 +44,5 @@ userSchema.methods.comparePassword = function(candidatePassword, cb) {
     });
 };
 
+userSchema.plugin(autoIncrement, { field: 'userId' });
 module.exports = mongoose.model('User', userSchema);
