@@ -1,9 +1,6 @@
 {{#if articleExists}}
-<h1 class="my-4">no article
-</h1>
-{{else}}
-{{/if}}
-<div class="row justify-content-center">
+
+<div class="row">
   <div class="col-lg-8">
 
     <!-- Title -->
@@ -12,7 +9,8 @@
     <!-- Author -->
     <p class="lead">
       by
-      <a href="#">{{author}}</a>
+      <!--<a href="#">{{author}}</a>-->
+      {{author}}
     </p>
 
     <hr>
@@ -28,23 +26,33 @@
     <hr>
     <!-- Comments Form -->
     <div class="card my-4">
-      <h5 class="card-header">Leave a Comment:</h5>
+      <h6 class="card-header">Leave a Comment:</h6>
       <div class="card-body">
-        <form>
+        {{#if userIsLogged}}
+        <form action="/article/{{articleId}}" method="post">
           <div class="form-group">
-            <textarea class="form-control" rows="3"></textarea>
+            <textarea class="form-control" rows="2" name="commentData"></textarea>
           </div>
-          <button type="submit" class="btn btn-primary">Submit</button>
+          <button type="submit" class="btn btn-primary btn-sm">Submit</button>
         </form>
+        {{else}}
+        Please log in to comment.
+        {{/if}}
       </div>
     </div>
     <!-- Single Comment -->
+    {{#each comments}}
     <div class="media mb-4">
-      <img class="d-flex mr-3 rounded-circle" src="http://placehold.it/50x50" alt="">
+      <!--<img class="d-flex mr-3 rounded-circle" src="http://placehold.it/50x50" alt="">-->
       <div class="media-body">
-        <h5 class="mt-0">Commenter Name</h5>
-        Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
+        <h5 class="mt-0">{{this.author.fullName}}</h5>
+        {{this.text}}
       </div>
     </div>
+    {{/each}}
   </div>
 </div>
+
+{{else}}
+<h1 class="my-4">no article</h1>
+{{/if}}

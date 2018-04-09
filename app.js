@@ -258,15 +258,16 @@ app.get('/unlink/twitter', function(req, res) {
 });
 
 app.get('/article/:articleId', function(req, res, next) {
+
   console.log("Artikkelia: ", req.params.articleId, " haetaan");
   dbf.getArticle(req, function(err, data) {
-    console.log(data);
+    //console.log(data);
 
     if(err) {
       next(err);
     }
     // Couldn't find an article with given ID.
-    if (article.length === 0) {
+    if (data.length === 0) {
       isArticle = false;
       res.render('fullarticle', {
         userIsLogged: (req.user ? true : false),
@@ -279,10 +280,12 @@ app.get('/article/:articleId', function(req, res, next) {
         user: req.user,
         title: data.title,
         blogPost: data.content,
-        author: data.fullName,
+        author: data.author.fullName,
         comments: "",
-        dateCreated: data.dateCreated,
-        articleExists: true
+        dateCreated: new Date(data.dateCreated).toDateString(),
+        articleExists: true,
+				articleId: data.articleId,
+				comments: data.comments
       })
     }
 
@@ -407,6 +410,51 @@ app.post('/articlepreview', isLoggedIn, function(req, res) {
 });
 
 app.post('/dashboard', isLoggedIn, dBoard.postDBoard);
+
+app.post('/article/:articleId', isLoggedIn, [
+	// Checks the form's input field based on the "name"-property.
+	check('commentData').exists().not().isEmpty().trim()
+], function(req, res, next) {
+	const errors = validationResult(req);
+	if (!errors.isEmpty()) {
+		return res.render('commentfailed', {
+			errors: errors.mapped(),
+		});
+	}
+	const comData = matchedData(req);
+
+  console.log("Artikkelia: ", comData, " kommentoidaan");
+
+	// Explanation:
+	// Article schema contains an array which contains objects with fields text,
+	// author and dateCreated. We make an object like that.
+	var comment = {text: comData.commentData, author: req.user._id,
+								 dateCreated: new Date()};
+	// We get the article and update it with the mongoose function and use option
+	// '$push' to insert the object into the array. With the 'new: true' we recieve
+	// the new updated document back to which we then use .populate functions
+	// to fetch the author objects from User documents.
+	Article.findOneAndUpdate({'articleId':req.params.articleId},
+													 {$push:{comments: comment} },
+													 {new: true}).populate('comments.author')
+													 .exec(function(err, data) {
+			if(err) {
+				console.log(err)
+			}
+			console.log(JSON.stringify(data.comments));
+			res.render('fullarticle', {
+				userIsLogged: (req.user ? true : false),
+				user: req.user,
+				title: data.title,
+				blogPost: data.content,
+				author: data.author.fullName,
+				dateCreated: new Date(data.dateCreated).toDateString(),
+				articleExists: true,
+				comments: JSON.stringify(data.comments)
+			});
+		});
+});
+
 
 app.post('/deleteUser', isLoggedIn, function(req, res){
   // Perhaps also remove all blog posts by this user as well.

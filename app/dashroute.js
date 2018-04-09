@@ -10,7 +10,7 @@ var markovGen   = require('./markovgen')
 exports.getDBoard = function(req, res){
   var twitterLink = true;
 	var dataAvailable = true;
-  var isArticle = true;
+  var isArticles = true;
 	if (req.user.twitter.token === undefined) {
 		twitterLink = false;
 	}
@@ -37,15 +37,16 @@ exports.getDBoard = function(req, res){
       // Fetch articles created by user.
       dbf.getArticles(req, function(err, articles) {
         if (articles.length === 0) {
-          isArticle = false;
+          isArticles = false;
         }
         console.log("Artikkelit haettu!")
+        console.log(articles);
         res.render('dashboard', {
           userIsLogged: (req.user ? true : false),
           user: req.user,
           isTwitterLinked: twitterLink,
           isDataAvailable: dataAvailable,
-          isArticles: isArticle,
+          isArticles: isArticles,
           articles: articles
         });
       });
@@ -56,15 +57,16 @@ exports.getDBoard = function(req, res){
     // Fetch articles created by user.
     dbf.getArticles(req, function(err, articles) {
       if (articles.length === 0) {
-        isArticle = false;
+        isArticles = false;
       }
       console.log("Artikkelit haettu lopussa, koska on false");
+      console.log(articles);
       res.render('dashboard', {
         userIsLogged: (req.user ? true : false),
         user: req.user,
         isTwitterLinked: twitterLink,
         isDataAvailable: dataAvailable,
-        isArticles: isArticle,
+        isArticles: isArticles,
         articles: articles
       });
     });
@@ -74,7 +76,7 @@ exports.getDBoard = function(req, res){
     // Fetch articles created by user.
     dbf.getArticles(req, function(err, articles) {
       if (articles.length === 0) {
-        isArticle = false;
+        isArticles = false;
       }
       console.log("Artikkelit haettu lopussa, koska ei ole undefined");
       res.render('dashboard', {
@@ -82,7 +84,7 @@ exports.getDBoard = function(req, res){
         user: req.user,
         isTwitterLinked: twitterLink,
         isDataAvailable: dataAvailable,
-        isArticles: isArticle,
+        isArticles: isArticles,
         articles: articles
       });
     });

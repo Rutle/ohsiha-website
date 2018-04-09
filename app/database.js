@@ -24,6 +24,7 @@ module.exports = {
           tempA.content = articles[i].content;
           new Date().toDateString()
           tempA.dateCreated = new Date().toDateString(articles[i].dateCreated);
+          tempA.articleId = articles[i].articleId;
           articlesArray.push(tempA);
         }
         callback(null, articlesArray);
@@ -31,13 +32,17 @@ module.exports = {
     });
   },
   getArticle: function(req, callback) {
-    Article.findOne({'articleId': req.params.articleId}, function (err, article) {
+    // Using mongoose's populate function that finds a User document specified
+    // by id in the author field and inserts it into the article document.
+    Article.findOne({'articleId': req.params.articleId})
+           .populate('author')
+           .populate('comments.author')
+           .exec(function(err, article) {
       if(err) {
         callback(err, null);
       }
-      console.log("article data: ", typeof(article));
+      //console.log("article data: ", article.comments);
       callback(null, article);
-
     });
   },
   getUser: function(req, callback) {

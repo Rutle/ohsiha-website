@@ -24,7 +24,7 @@ var userSchema = mongoose.Schema({
       username: String
   },
 });
-userSchema.set('toObject', { getters: true });
+
 userSchema.virtual('fullName').get(function() {
   var name = "";
   if (this.twitter.displayName === undefined) {
@@ -45,7 +45,9 @@ userSchema.virtual('fullName').get(function() {
   }
   return name;
 });
-
+userSchema.set('toObject', { getters: true });
+userSchema.set('toObject', { virtuals: true });
+userSchema.set('toJSON', { virtuals: true });
 
 // userSchema's methods.
 userSchema.methods.genHash = function(password) {
