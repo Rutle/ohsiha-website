@@ -8,6 +8,10 @@ $(function () {
 	// Disable the button for the duration of data fetching.
     $('#fetchDataSubmit').prop("disabled", true);
     $('#fetchDataSubmit').val('Please wait');
+    $('#title').attr('placeholder', "");
+    $('#author').attr('placeholder', "");
+    $('#generatedPost').attr('placeholder', "");
+    $('#articlepreview').attr('hidden', true);
 
 	// Ajax post call to make server side fetch the tweet data for current user.
     $.ajax({

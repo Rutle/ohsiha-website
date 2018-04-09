@@ -25,15 +25,24 @@ module.exports = {
         // For example accessing first tweet's text can be done with:
         // >> tweets[0].text
       	for (twiitti of tweets) {
-          // console.log(twiitti.text);
           // Clean up text from mentions, URLs and hashtags.
+          twiitti = twiitti.text.replace(/\B@[a-z0-9_-]+/gi,'')
+								                .replace(/#(\S*)/g, '')
+								                .replace(/(?:https?|ftp):\/\/[\n\S]+/g, '')
+								                .replace(/\s\s+/g, ' ')
+								                .replace(/[\ ,-]+/g,' ')
+								                .split(/[\.:;!?-]+/g).filter(x => x);
+          var sent = "";
+          for (sent of twiitti) {
+            // Skip empty elements in array.
+            sent = sent.trim();
+            if (sent.length !== 0 ) {
+              console.log("Lause tallennettu: ["+sent+"]");
+              arrayOfTweets.push(sent);
+            }
 
-          arrayOfTweets.push(
-            twiitti.text.replace(/\B@[a-z0-9_-]+/gi,'')          // Remove mentions.
-                   .replace(/(?:https?|ftp):\/\/[\n\S]+/g, '')   // Remove URLs.
-  				         .replace(/#(\S*)/g, '')                       // Remove hashtags.
-  				         .replace(/[\ ,:;-]+/g,' '));                  // Remove unnecessary punctions. Preserve
-                                                                 // period, question mark and exclamation mark.
+          }
+
       	}
 
       }
