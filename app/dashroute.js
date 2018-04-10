@@ -14,6 +14,7 @@ exports.getDBoard = function(req, res){
 	if (req.user.twitter.token === undefined) {
 		twitterLink = false;
 	}
+  console.log("Dashboard route: ");
 
 	// To reduce database calls we add information to session data about twitter
 	// data availability.

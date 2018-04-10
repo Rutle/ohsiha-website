@@ -127,7 +127,7 @@ module.exports = function(passport) {
         consumerKey: process.env.TWITTER_CON_KEY,
         consumerSecret: process.env.TWITTER_CON_SECRET,
         //callbackURL: 'http://localhost:5000/auth/twitter/callback',
-        callbackURL: 'http://ohsiha-webmc.herokuapp.com/auth/twitter/callback',
+        callbackURL: 'https://ohsiha-webmc.herokuapp.com/auth/twitter/callback',
         passReqToCallback: true
 
 
