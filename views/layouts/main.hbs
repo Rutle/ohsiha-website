@@ -19,7 +19,8 @@
   </head>
 
   <body>
-
+  <div class="main_wrap">
+    <div class="navi">
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark nav-shadow fixed-top"> <!-- fixed-top class for sticking it to the top + padding-top: 6rem-->
       <div class="container">
       <a class="navbar-brand" id="navbarbrand" href="#"><strong>R></strong></a>
@@ -57,24 +58,27 @@
         </ul>
   	  </div>
       </div>
+    </div>
 
     </nav>
 
 
-  <div class="main_wrap">
-    <div id="leftS"></div>
+    <div class="main">
+      <div id="leftS"></div>
 
-    <main role="main" class="col container contentContainer">
+      <div class="contentContainer">
+        <div class="container">
 
-    {{{body}}}
 
-    </main><!-- /.container -->
-    <footer class="footer border-top border-dark">
+          {{{body}}}
+        </div>
+      </div><!-- /.container -->
+      <div id="rightS"></div>
+    </div>
+    <div class="footer border-top border-dark">
       <div class="container">
-        <span class="text-muted"></span>
       </div>
-    </footer>
-    <div id="rightS"></div>
+    </div>
   </div>
 
 
