@@ -16,7 +16,8 @@ $(function () {
 	// Ajax post call to make server side fetch the tweet data for current user.
     $.ajax({
       type: 'POST',
-      url: 'http://localhost:5000/dashboard',
+      //url: 'http://localhost:5000/dashboard',
+      url: 'http://ohsiha-webmc.herokuapp.com/dashboard',
       data: {form: 'fetchData'},
       dataType: 'json',
       success: function (data) {
@@ -47,7 +48,8 @@ $(function () {
 
     $.ajax({
       type: 'POST',
-      url: 'http://localhost:5000/dashboard',
+      //url: 'http://localhost:5000/dashboard',
+      url: 'http://ohsiha-webmc.herokuapp.com/dashboard',
       data: {form: 'generatePost'},
       dataType: 'json',
       success: function(data) {
