@@ -85,6 +85,7 @@ app.set('view engine', '.hbs');
 // #### Setup middleware ####
 app.use('/bootstrap', express.static(__dirname + '/node_modules/bootstrap/'));
 app.use('/popper', express.static(__dirname + '/node_modules/popper.js/'));
+app.use('/d3-cloud', express.static(__dirname + '/node_modules/d3-cloud/build/'));
 app.use('/', express.static(publicPath));
 app.use(morgan('dev')); // log every request to the console
 app.use(cookieParser()); // Adds additional information to request (req.cookie).

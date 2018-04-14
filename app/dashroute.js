@@ -148,17 +148,36 @@ exports.postDBoard = function(req, res, next) {
           if (err) {
             return res.status(500).send('There was not enough data to generate a post.');
           }
+          var wcData = {};
           var data = "";
           for (var i = 0; i < 2; i++) {
-            // console.log("postaus: ", result[i].string);
+            console.log("postaus: ["+result[i].string+"]");
             data += result[i].string + " ";
+
           }
+          for (var j = 0; j < tweetData.content.length; j++) {
+            var tempResArray = [];
+            tempResArray = tweetData.content[j].toLowerCase().split(' ');
+            for(var k = 0; k < tempResArray.length; k++) {
+              if(!wcData[tempResArray[k]]) {
+                wcData[tempResArray[k]] = 0;
+              }
+              wcData[tempResArray[k]]++;
+            }
+          }
+          var wcArray = [];
+
+          for(var item in wcData) {
+            wcArray.push({text: item, size: wcData[item]});
+          }
+          console.log(wcArray);
           return res.status(200).send({
             userIsLogged: (req.user ? true : false),
             title: "Clever musings.",
             dateCreated: new Date().toDateString(),
             data: data,
-            author: req.user.twitter.displayName
+            author: req.user.twitter.displayName,
+            wordcloudData: wcArray
           });
         })
       }

@@ -13,6 +13,7 @@
     "bootstrap": "^4.0.0",
     "connect-flash": "^0.1.1",
     "cookie-parser": "^1.4.3",
+    "d3-cloud": "^1.2.5",
     "dotenv": "^5.0.1",
     "express": "^4.16.3",
     "express-handlebars": "^3.0.0",
