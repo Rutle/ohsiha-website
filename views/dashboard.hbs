@@ -45,11 +45,25 @@
     <!-- End posts -->
   </div>
   <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">pro</div>
-  <div class="tab-pane fade" id="stats" role="tabpanel" aria-labelledby="stats-tab">Stats</div>
+  <div class="tab-pane fade" id="stats" role="tabpanel" aria-labelledby="stats-tab">
+    {{#if isDataAvailable}}
+    <div class="row">
+      <div class="col">
+        <div id="cloud"> </div>
+      </div>
+    </div>
+    {{else}}
+    <div class="row">
+      <div class="col">
+        <div id="cloud" class="svg-container">No tweet data available for building a wordcloud.</div>
+      </div>
+    </div>
+    {{/if}}
+  </div>
   <div class="tab-pane fade" id="generate" role="tabpanel" aria-labelledby="generate-tab">
 
     <div class="row">
-      <div class="col-md-5">
+      <div class="col-md-5" id="generateSide">
         <div class="row justify-content-center">
           <div class="col-md-10 mt-2">
             {{#if isTwitterLinked}}
@@ -108,3 +122,7 @@
 
   </div>
 </div>
+<script>
+var wordcloudData = JSON.parse(JSON.stringify({{{wordData}}}));
+
+</script>

@@ -1,9 +1,8 @@
 // Custom scripts for the website
-
-var wordcloudData = [];
-
 $(function () {
+  drawWordCloud(wordcloudData);
 
+  
   $('#fetchData').on('submit', function (e) {
     e.preventDefault();
 	  // var formID = $(this).parents("form").attr("name");
@@ -66,8 +65,9 @@ $(function () {
         $('#generatePostSubmit').val('Generate');
         $('#generatePostSubmit').prop('disabled', false);
         $('#generatePostSubmit').trigger('blur');
-        wordcloudData = data.wordcloudData;
-        console.log(wordcloudData);
+        //wordcloudData = data.wordcloudData;
+        //console.log(wordcloudData);
+        //drawWordCloud(wordcloudData);
 
       },
       error: function(jqXHR, textStatus, errorThrown, data) {

@@ -42,13 +42,34 @@ exports.getDBoard = function(req, res){
         }
         console.log("Artikkelit haettu!")
         console.log(articles);
+        var wcData = {};
+        var wcArray = [];
+        if(dataAvailable) {
+          for (var j = 0; j < tweetData.content.length; j++) {
+            var tempResArray = [];
+            tempResArray = tweetData.content[j].toLowerCase().split(' ');
+            for(var k = 0; k < tempResArray.length; k++) {
+              if(!wcData[tempResArray[k]]) {
+                wcData[tempResArray[k]] = 0;
+              }
+              wcData[tempResArray[k]]++;
+            }
+          }
+          for(var item in wcData) {
+            wcArray.push({text: item, size: wcData[item] + Math.floor(Math.random() * 90)});
+          }
+          console.log("dataa oli saatavilla");
+        }
+        console.log(wcArray);
+        //var wcdatatata = [{text:"Hello",size:20},{text:"World",size:10},{text:"Normally",size:25},{text:"You",size:15},{text:"Want",size:30},{text:"More",size:12},{text:"texts",size:8},{text:"But",size:18},{text:"Who",size:22},{text:"Cares",size:27}];
         res.render('dashboard', {
           userIsLogged: (req.user ? true : false),
           user: req.user,
           isTwitterLinked: twitterLink,
           isDataAvailable: dataAvailable,
           isArticles: isArticles,
-          articles: articles
+          articles: articles,
+          wordData: JSON.stringify(wcArray)
         });
       });
 		});
@@ -79,14 +100,41 @@ exports.getDBoard = function(req, res){
       if (articles.length === 0) {
         isArticles = false;
       }
-      console.log("Artikkelit haettu lopussa, koska ei ole undefined");
-      res.render('dashboard', {
-        userIsLogged: (req.user ? true : false),
-        user: req.user,
-        isTwitterLinked: twitterLink,
-        isDataAvailable: dataAvailable,
-        isArticles: isArticles,
-        articles: articles
+      TwitterData.findOne({'author': req.user._id}, function(err, tweetData) {
+        if (err) {
+          return next(err);
+        }
+        var wcData = {};
+        var wcArray = [];
+        if(dataAvailable) {
+          for (var j = 0; j < tweetData.content.length; j++) {
+            var tempResArray = [];
+            tempResArray = tweetData.content[j].toLowerCase().split(' ');
+            for(var k = 0; k < tempResArray.length; k++) {
+              if(!wcData[tempResArray[k]]) {
+                wcData[tempResArray[k]] = 0;
+              }
+              wcData[tempResArray[k]]++;
+            }
+          }
+          for(var item in wcData) {
+            wcArray.push({text: item, size: wcData[item] + Math.floor(Math.random() * 90)});
+          }
+          console.log("dataa oli saatavilla ihan vika else");
+        }
+        console.log(wcArray);
+        //var wcdatatata = [{text:"Hello",size:20},{text:"World",size:10},{text:"Normally",size:25},{text:"You",size:15},{text:"Want",size:30},{text:"More",size:12},{text:"texts",size:8},{text:"But",size:18},{text:"Who",size:22},{text:"Cares",size:27}];
+        console.log("Artikkelit haettu lopussa, koska ei ole undefined");
+        console.log("Stringify:", JSON.stringify(wcArray));
+        res.render('dashboard', {
+          userIsLogged: (req.user ? true : false),
+          user: req.user,
+          isTwitterLinked: twitterLink,
+          isDataAvailable: dataAvailable,
+          isArticles: isArticles,
+          articles: articles,
+          wordData: JSON.stringify(wcArray)
+        });
       });
     });
   }
@@ -148,36 +196,20 @@ exports.postDBoard = function(req, res, next) {
           if (err) {
             return res.status(500).send('There was not enough data to generate a post.');
           }
-          var wcData = {};
+
           var data = "";
           for (var i = 0; i < 2; i++) {
             console.log("postaus: ["+result[i].string+"]");
             data += result[i].string + " ";
 
           }
-          for (var j = 0; j < tweetData.content.length; j++) {
-            var tempResArray = [];
-            tempResArray = tweetData.content[j].toLowerCase().split(' ');
-            for(var k = 0; k < tempResArray.length; k++) {
-              if(!wcData[tempResArray[k]]) {
-                wcData[tempResArray[k]] = 0;
-              }
-              wcData[tempResArray[k]]++;
-            }
-          }
-          var wcArray = [];
-
-          for(var item in wcData) {
-            wcArray.push({text: item, size: wcData[item]});
-          }
-          console.log(wcArray);
           return res.status(200).send({
             userIsLogged: (req.user ? true : false),
             title: "Clever musings.",
             dateCreated: new Date().toDateString(),
             data: data,
             author: req.user.twitter.displayName,
-            wordcloudData: wcArray
+            //wordcloudData: wcArray
           });
         })
       }

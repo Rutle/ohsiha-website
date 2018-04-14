@@ -112,6 +112,24 @@ body {
 #navbarbrand {
   margin-bottom: 0;
 }
+
+.svg-container {
+    display: inline-block;
+    position: relative;
+    width: 100%;
+    /*height: 100%;*/
+    padding-bottom: 100%;
+    vertical-align: top;
+    overflow: hidden;
+}
+.svg-content {
+    display: inline-block;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+
 .nav-shadow {
   box-shadow: 0 2px 4px -1px rgba(0,0,0,0.25);
 }
@@ -130,7 +148,14 @@ body {
   background-color: black;
   box-shadow: 0 2px 4px 0px rgba(0,0,0,0.25);
 }
-
+#cloud {
+  height: 100%;
+  width: 100%;
+}
+#articlepreview {
+  height: 100%;
+  width: 100%;
+}
 /* Forms */
 
 .form-signin {
