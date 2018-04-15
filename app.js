@@ -107,6 +107,12 @@ app.use(flash());
 // #### GET	####
 // Base URL (index)
 app.get('/', function(req, res) {
+	dbf.getArticlesSorted(function(err, articles) {
+		if(err) {
+			next(err);
+		}
+		console.log("Artikkelit haettu sortatusti: ", articles);
+	})
 	res.render('home', {
 		user : req.user,
 		userIsLogged : (req.user ? true : false)
@@ -282,7 +288,6 @@ app.get('/article/:articleId', function(req, res, next) {
         title: data.title,
         blogPost: data.content,
         author: data.author.fullName,
-        comments: "",
         dateCreated: new Date(data.dateCreated).toDateString(),
         articleExists: true,
 				articleId: data.articleId,
@@ -441,8 +446,11 @@ app.post('/article/:articleId', isLoggedIn, [
 													 .exec(function(err, data) {
 			if(err) {
 				console.log(err)
+				return res.render('commentfailed', {errors: err});
 			}
-			console.log(JSON.stringify(data.comments));
+			res.redirect('/article/'+req.params.articleId);
+			//console.log(JSON.stringify(data.comments));
+			/*
 			res.render('fullarticle', {
 				userIsLogged: (req.user ? true : false),
 				user: req.user,
@@ -451,8 +459,10 @@ app.post('/article/:articleId', isLoggedIn, [
 				author: data.author.fullName,
 				dateCreated: new Date(data.dateCreated).toDateString(),
 				articleExists: true,
-				comments: JSON.stringify(data.comments)
+				comments: JSON.stringify(data.comments),
+				articleId: data.articleId,
 			});
+			*/
 		});
 });
 

@@ -7,6 +7,8 @@ var TwitterData = require('./models/twitterdata');
 var twit        = require('./tweets');
 var markovGen   = require('./markovgen')
 
+
+// GET "/dashboard" URL
 exports.getDBoard = function(req, res){
   var twitterLink = true;
 	var dataAvailable = true;
@@ -15,6 +17,57 @@ exports.getDBoard = function(req, res){
 		twitterLink = false;
 	}
   console.log("Dashboard route: ");
+
+  TwitterData.findOne({'author': req.user._id}, function(err, tweetData) {
+    if (err) {
+      return next(err);
+    }
+    if(!tweetData) {
+      dataAvailable = false;
+      console.log("No twitter data.");
+    // A document was found.
+    } else {
+      dataAvailable = true;
+      console.log("Twitter data is available");
+    }
+
+    dbf.getArticles(req, function(err, articles) {
+      if (articles.length === 0) {
+        isArticles = false;
+        console.log("No articles.");
+      }
+
+      var wcData = {};
+      var wcArray = [];
+      if(dataAvailable) {
+        for (var j = 0; j < tweetData.content.length; j++) {
+          var tempResArray = [];
+          tempResArray = tweetData.content[j].toLowerCase().split(' ');
+          for(var k = 0; k < tempResArray.length; k++) {
+            if(!wcData[tempResArray[k]]) {
+              wcData[tempResArray[k]] = 0;
+            }
+            wcData[tempResArray[k]]++;
+          }
+        }
+        for(var item in wcData) {
+          wcArray.push({text: item, size: wcData[item] + Math.floor(Math.random() * 90)});
+        }
+        console.log("dataa oli saatavilla");
+      }
+      res.render('dashboard', {
+        userIsLogged: (req.user ? true : false),
+        user: req.user,
+        isTwitterLinked: twitterLink,
+        isDataAvailable: dataAvailable,
+        isArticles: isArticles,
+        articles: articles,
+        wordData: JSON.stringify(wcArray)
+      });
+    })
+  })
+
+/*
 
 	// To reduce database calls we add information to session data about twitter
 	// data availability.
@@ -137,7 +190,7 @@ exports.getDBoard = function(req, res){
         });
       });
     });
-  }
+  }*/
 };
 
 exports.postDBoard = function(req, res, next) {

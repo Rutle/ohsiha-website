@@ -22,7 +22,6 @@ module.exports = {
           tempA.title = articles[i].title;
           tempA.author = user.fullName;
           tempA.content = articles[i].content;
-          new Date().toDateString()
           tempA.dateCreated = new Date().toDateString(articles[i].dateCreated);
           tempA.articleId = articles[i].articleId;
           articlesArray.push(tempA);
@@ -60,6 +59,30 @@ module.exports = {
         callback(err, null);
       }
       callback(null, user.fullName);
+    });
+  },
+  getArticlesSorted: function (callback) {
+    Article.find({})
+           .sort({dateCreated: 'desc'})
+           .populate('author')
+           .exec(function(err, articles) {
+
+      if (err) {
+          callback(err, null);
+      }
+      // Only take what we need instead of sending full data document background
+      // containing personal information.
+      var articlesArray = [];
+      for (var i = 0; i < articles.length; i++) {
+        var tempA = {};
+        tempA.title = articles[i].title;
+        tempA.author = articles[i].author.fullName;
+        tempA.content = articles[i].content;
+        tempA.dateCreated = new Date().toDateString(articles[i].dateCreated);
+        tempA.articleId = articles[i].articleId;
+        articlesArray.push(tempA);
+      }
+      callback(null, articlesArray);
     });
   }
 }
