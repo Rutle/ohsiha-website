@@ -106,7 +106,15 @@ app.use(flash());
 // #### Routing of URLs ####
 // #### GET	####
 // Base URL (index)
-app.get('/', function(req, res, next) {
+app.get(['/', '/:page(\\d+)/'], function(req, res, next) {
+	console.log(req.params.page, " Type: ", typeof(req.params.page));
+	var currentPage = 0;
+	if(typeof(req.params.page) === 'undefined' || req.params.page === "0" || req.params.page === "1") {
+		// Main page
+		currentPage = 1;
+	} else {
+		currentPage = parseInt(req.params.page);
+	}
 	var isArticles = true;
 	dbf.getArticlesSorted(function(err, articles) {
 		if(err) {
@@ -114,18 +122,37 @@ app.get('/', function(req, res, next) {
 			res.status(500);
 			return res.render('error', { error: 'Database error.' });
 		}
+
 		if(articles.length === 0) {
 			isArticles = false;
 		}
-		console.log("Artikkelit haettu sortatusti: ", articles);
+		//console.log("CurrentPage: ", currentPage);
+		//console.log("alusta: ", ((currentPage-1)*5), " asti: ", (currentPage*5));
+		var pageArticles = articles.slice(((currentPage-1)*5), (currentPage*5));
+		//console.log("artikkelit: ", pageArticles);
+		var articleCount = articles.length;
+		var maxPageCount = 0;
+		//5 articles previews per page.
+		var maxPageCount = Math.floor(articleCount/5);
+		if (articleCount % 5 === 0) {
+			maxPageCount = Math.floor(articleCount/5);
+		} else {
+			maxPageCount = Math.floor(articleCount/5) + 1
+		}
+		//var remainder = articleCount - (pages*5);
+		//console.log("Sivut: ", pages, " Seuraavalle sivulle jaa: ", remainder);
+		//console.log("Artikkelit haettu sortatusti: ", articles);
 		res.render('home', {
 			user : req.user,
 			userIsLogged : (req.user ? true : false),
-			articles: articles,
-			isArticles: isArticles
+			articles: pageArticles,
+			isArticles: isArticles,
+			prevPage: currentPage-1,
+			curPage: currentPage,
+			nextPage: currentPage+1,
+			maxPages: maxPageCount
 		});
 	})
-
 });
 
 // Possible Admin page. (Maybe once I integrate this to my own website.)
