@@ -35,9 +35,6 @@
           </li>
           {{#if userIsLogged}} {{! User has logged in }}
           <li class="nav-item">
-            <a class="nav-link" href="/profile">Profile</a>
-          </li>
-          <li class="nav-item">
             <a class="nav-link" href="/dashboard">Dashboard</a>
           </li>
           <li class="nav-item">
@@ -45,11 +42,15 @@
           </li>
           {{else}} {{! User hasn't logged in }}
           <li class="nav-item">
+            <a class="nav-link" href="/blog">Blog</a>
+          </li>
+          <li class="nav-item">
             <a class="nav-link" href="/login">Login</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="/signup">Sign Up</a>
           </li>
+
           {{/if}}
           {{#compare user.rights "===" "Admin"}}
           <li class="nav-item">

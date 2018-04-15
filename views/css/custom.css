@@ -109,11 +109,11 @@ body {
 .dashCont {
   height: 100%;
 }
-.pagBot {
-  display: table-cell;
-  vertical-align: bottom;
-  height: 100;
+
+.intro {
+  padding-top: 3rem;
 }
+
 .box{
   border-bottom: 1px solid black;
   border-image-source: linear-gradient(to right, black , white);

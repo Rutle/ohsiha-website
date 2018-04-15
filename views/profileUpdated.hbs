@@ -1,4 +1,13 @@
 <div class="row justify-content-start"> <!-- Heading -->
   <div class="col"><h1 class="text-left"><strong>></strong>Profile</h1></div>
 </div>
+
+{{#if isSuccess}}
 <h1 class="h3 mb-3 font-weight-normal">Information modified successfully.</h1>
+{{else}}
+<h1 class="h3 mb-3 font-weight-normal">Information update was not successful.</h1>
+Reason:
+{{#each errors}}
+  {{this}}
+{{/each}}
+{{/if}}

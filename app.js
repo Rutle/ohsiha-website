@@ -106,7 +106,14 @@ app.use(flash());
 // #### Routing of URLs ####
 // #### GET	####
 // Base URL (index)
-app.get(['/', '/:page(\\d+)/'], function(req, res, next) {
+app.get('/', function(req, res, next) {
+	res.render('home', {
+		user : req.user,
+		userIsLogged : (req.user ? true : false),
+	});
+});
+
+app.get(['/blog','/blog/:page(\\d+)/'], function(req, res, next) {
 	console.log(req.params.page, " Type: ", typeof(req.params.page));
 	var currentPage = 0;
 	if(typeof(req.params.page) === 'undefined' || req.params.page === "0" || req.params.page === "1") {
@@ -142,7 +149,7 @@ app.get(['/', '/:page(\\d+)/'], function(req, res, next) {
 		//var remainder = articleCount - (pages*5);
 		//console.log("Sivut: ", pages, " Seuraavalle sivulle jaa: ", remainder);
 		//console.log("Artikkelit haettu sortatusti: ", articles);
-		res.render('home', {
+		res.render('blog', {
 			user : req.user,
 			userIsLogged : (req.user ? true : false),
 			articles: pageArticles,
@@ -170,7 +177,7 @@ app.get('/admin', isLoggedIn, function(req, res) {
 	}
 
 });
-
+/*
 // Testing and possible page for profile and additional information.
 app.get('/profile', isLoggedIn, function(req, res){
 	var twitterLink = true;
@@ -189,7 +196,7 @@ app.get('/profile', isLoggedIn, function(req, res){
 			userIsLogged : (req.user ? true : false)
   });
 });
-
+*/
 // Logout route
 app.get('/logout', function(req, res){
   req.logout();
@@ -200,12 +207,13 @@ app.get('/logout', function(req, res){
 app.get('/login', function(req, res){
 	var loginMessage = req.flash('loginMessage');
   var successMessage = true;
-  if((loginMessage.size > 0)) {
+  if((loginMessage.length > 0)) {
     successMessage = false;
   }
+	console.log(loginMessage[0]);
   res.render('login', {
-    message: loginMessage,
-    success: successMessage,
+    message: loginMessage[0],
+    isSuccess: successMessage,
 		userIsLogged : (req.user ? true : false)
   });
 });
@@ -242,7 +250,7 @@ app.get('/auth/twitter', passport.authenticate('twitter', {scope: 'email'}));
 // Callback handler.
 app.get('/auth/twitter/callback',
 	passport.authenticate('twitter', {
-		successRedirect: '/profile',
+		successRedirect: '/dashboard',
 		failureRedirect: '/'
 	}
 ));
@@ -262,7 +270,7 @@ app.get('/connect/local', function(req, res) {
 });
 
 app.post('/connect/local', passport.authenticate('local-signup', {
-	successRedirect: '/profile',
+	successRedirect: '/dashboard',
 	failureRedirect: '/connect/local',
 	failureFlash: true
 }));
@@ -273,7 +281,7 @@ app.get('/connect/twitter', passport.authorize('twitter', { scope : 'email' }));
 // handle the callback after twitter has authorized the user
 app.get('/connect/twitter/callback',
 		passport.authorize('twitter', {
-				successRedirect : '/profile',
+				successRedirect : '/dashboard',
 				failureRedirect : '/'
 }));
 
@@ -287,7 +295,7 @@ app.get('/unlink/local', function(req, res) {
 	user.local.lastName 	= undefined;
 
 	user.save(function(err) {
-		res.redirect('/profile');
+		res.redirect('/dashboard');
 	});
 });
 
@@ -296,7 +304,7 @@ app.get('/unlink/twitter', function(req, res) {
 	var user           = req.user;
 	user.twitter.token = undefined;
 	user.save(function(err) {
-		res.redirect('/profile');
+		res.redirect('/dashboard');
 	});
 });
 
@@ -346,7 +354,7 @@ app.get('/user/:userId', function(req, res, next) {
 // Handles submitted login form. (POST)
 // Use 'local-login' strategy.
 app.post('/login', passport.authenticate('local-login', {
-  successRedirect : '/profile', // redirect to the secure profile section
+  successRedirect : '/dashboard', // redirect to the secure profile section
   failureRedirect : '/login', // redirect back to the signup page if there is an error
   failureFlash : true // allow flash messages
 	})
@@ -355,7 +363,7 @@ app.post('/login', passport.authenticate('local-login', {
 // Handles submitted signup form. (POST)
 // Use 'local-signup' strategy.
 app.post('/signup', passport.authenticate('local-signup', {
-  successRedirect : '/profile', // redirect to the secure profile section
+  successRedirect : '/dashboard', // redirect to the secure profile section
   failureRedirect : '/signup', // redirect back to the signup page if there is an error
   failureFlash : true // allow flash messages
   })
@@ -372,7 +380,7 @@ app.post('/profile', isLoggedIn, [
 ], function(req, res) {
 	const errors = validationResult(req);
 	if (!errors.isEmpty()) {
-		return res.render('profile', {
+		return res.render('profileUpdated', {
 			isSuccess: false,
 			errors: errors.mapped(),
 			userIsLogged: (req.user ? true : false),
@@ -465,8 +473,6 @@ app.post('/article/:articleId', isLoggedIn, [
 		});
 	}
 	const comData = matchedData(req);
-
-  //console.log("Artikkelia: ", comData, " kommentoidaan");
 
 	// Explanation:
 	// Article schema contains an array which contains objects with fields text,

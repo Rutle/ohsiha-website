@@ -1,0 +1,105 @@
+<div class="row">
+  <div class="col-sm-6">
+    <div class="card">
+      <h5 class="card-header">Local profile</h5>
+      <div class="card-body">
+        {{#if isLocalLinked}}
+        <form action="/profile" method="post">
+          <div class="form-group row">
+            <label for="staticEmail" class="col-sm-3 col-form-label">Email</label>
+            <div class="col-sm-9">
+              <input type="text" readonly class="form-control-plaintext" id="staticEmail" value="{{user.local.email}}">
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="inputFName" class="col-sm-3 col-form-label">First name</label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control" id="inputFName" name="fname" placeholder="{{user.local.firstName}}">
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="inputLName" class="col-sm-3 col-form-label">Last name</label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control" id="inputLName" name="lname" placeholder="{{user.local.lastName}}">
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="inputPassword" class="col-sm-3 col-form-label">Password</label>
+            <div class="col-sm-9">
+              <input type="password" class="form-control" id="inputPassword" name="password" placeholder="Required if modifying information" required>
+            </div>
+          </div>
+          <div class="form-group row">
+            <div class="col-sm-6">
+              <button class="btn btn-dark btn-block" id="submitData" type="submit">Apply changes</button>
+            </div>
+            <div class="col-sm-6">
+              <button type="button" class="btn btn-dark btn-block" data-toggle="modal" data-target="#delUserModal">Delete account</button>
+              <!-- Modal -->
+              <div class="modal" id="delUserModal" tabindex="-1" role="dialog" aria-labelledby="delUserModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="delUserModalLabel">User deletion confirmation</h5>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    <div class="modal-body">
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                      <button class="btn btn-primary" type="submit" formaction="/deleteUser">Delete</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+          <a href="/unlink/local" class="btn btn-danger">Unlink</a>
+        {{else}}
+          <a href="/connect/local" class="btn btn-info">Connect local</a>
+        {{/if}}
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-6">
+    <div class="card">
+      <h5 class="card-header">Twitter profile</h5>
+      <div class="card-body">
+        {{#if isTwitterLinked}}
+        <form action="/profile" method="post">
+          <div class="form-group row">
+            <label for="staticEmail" class="col-sm-4 col-form-label">ID</label>
+            <div class="col-sm-8">
+              <input type="text" readonly class="form-control-plaintext" id="staticEmail" value="{{user.twitter.id}}">
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="inputFName" class="col-sm-4 col-form-label">Token</label>
+            <div class="col-sm-8">
+              <input type="text" readonly class="form-control-plaintext" id="inputFName" placeholder="{{user.twitter.token}}">
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="inputLName" class="col-sm-4 col-form-label">Username</label>
+            <div class="col-sm-8">
+              <input type="text" class="form-control-plaintext" id="inputLName"placeholder="{{user.twitter.username}}">
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="inputLName" class="col-sm-4 col-form-label">Displayname</label>
+            <div class="col-sm-8">
+              <input type="text" class="form-control-plaintext" id="inputLName"placeholder="{{user.twitter.displayName}}">
+            </div>
+          </div>
+        </form>
+          <a href="/unlink/twitter" class="btn btn-danger">Unlink</a>
+        {{else}}
+          <a href="/connect/twitter" class="btn btn-info">Connect Twitter</a>
+        {{/if}}
+      </div>
+    </div>
+  </div>
+</div>

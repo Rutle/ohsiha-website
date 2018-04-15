@@ -1,0 +1,54 @@
+<section class="intro">
+  <div class="container">
+{{#if isArticles}}
+  <div class="row">
+  {{#each articles}}
+    {{> article}}
+  {{/each}}
+  </div>
+
+<!-- pagination -->
+<div class="row">
+  <div class="col">
+    <nav aria-label="...">
+      <ul class="pagination justify-content-left">
+        {{#compare prevPage "===" 0}}
+        {{else}}
+        <li class="page-item">
+          <a class="page-link text-secondary" href="/{{prevPage}}">Previous</a>
+        </li>
+        {{/compare}}
+        {{#compare prevPage "===" 0}}
+        {{else}}
+        <li class="page-item"><a class="page-link text-secondary" href="/{{prevPage}}">{{prevPage}}</a></li>
+        {{/compare}}
+        <li class="page-item">
+          <span class="page-link bg-dark text-white">
+            {{curPage}}
+            <span class="sr-only">(current)</span>
+          </span>
+        </li>
+        {{#compare nextPage ">" maxPages}}
+        {{else}}
+        <li class="page-item"><a class="page-link text-secondary" href="/{{nextPage}}">{{nextPage}}</a></li>
+        <li class="page-item">
+          <a class="page-link text-secondary" href="/{{nextPage}}">Next</a>
+        </li>
+        {{/compare}}
+      </ul>
+    </nav>
+  </div>
+</div>
+</div>
+</section>
+{{else}}
+<section class="intro">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8">
+        <h2>There are no articles available.</h2>
+      </div>
+    </div>
+  </div>
+</section>
+{{/if}}

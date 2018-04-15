@@ -13,9 +13,13 @@ exports.getDBoard = function(req, res){
   var twitterLink = true;
 	var dataAvailable = true;
   var isArticles = true;
+  var localLink = true;
 	if (req.user.twitter.token === undefined) {
 		twitterLink = false;
 	}
+  if (req.user.local.email === undefined) {
+    localLink = false;
+  }
   console.log("Dashboard route: ");
 
   TwitterData.findOne({'author': req.user._id}, function(err, tweetData) {
@@ -60,6 +64,7 @@ exports.getDBoard = function(req, res){
         userIsLogged: (req.user ? true : false),
         user: req.user,
         isTwitterLinked: twitterLink,
+        isLocalLinked: localLink,
         isDataAvailable: dataAvailable,
         isArticles: isArticles,
         articles: articles,

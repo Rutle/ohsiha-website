@@ -1,40 +1,28 @@
-<div class="row">
-<div class="col">
-<h1 class="my-4">Login
-</h1>
-</div>
-</div>
+<section class="intro">
+  <div class="row">
+    <div class="col">
+      <!-- Add another if to check if already logged in or do it on server side -->
+      {{#if userIsLogged}}
+        <h1 class="h3 mb-3 font-weight-normal">You are already logged in.</h1>
+      {{else}}
+        <form action="/login" method="post" class="form-signin">
+          <h2 class="mb-3 font-weight-normal">Please log in</h2>
+        {{#if isSuccess}}
+        {{else}}
+          <div class="alert alert-danger">{{message}}</div>
+        {{/if}}
+          <label for="inputEmail" class="sr-only">Email address</label>
+          <input type="text" id="inputEmail" name="email" class="form-control" placeholder="Email address" required autofocus>
+          <label for="inputPassword" class="sr-only">Password</label>
+          <input type="password" id="inputPassword" name="password" class="form-control" placeholder="Password" required>
 
-<div class="row">
-  <div class="col">
-    <!-- Add another if to check if already logged in or do it on server side -->
-    {{#if userIsLogged}}
-      <h1 class="h3 mb-3 font-weight-normal">You are already logged in.</h1>
-    {{else}}
-    {{#if success}}
-    {{else}}
-    <!-- Message when login fails. -->
-      <div class="alert alert-danger">{{message}}</div>
-    {{/if}}
-    <form action="/login" method="post" class="form-signin">
-      <h1 class="h3 mb-3 font-weight-normal">Please log in</h1>
-      <label for="inputEmail" class="sr-only">Email address</label>
-      <input type="text" id="inputEmail" name="email" class="form-control" placeholder="Email address" required autofocus>
-      <label for="inputPassword" class="sr-only">Password</label>
-      <input type="password" id="inputPassword" name="password" class="form-control" placeholder="Password" required>
-      <!--
-      <div class="checkbox mb-3">
-        <label>
-          <input type="checkbox" value="remember-me"> Remember me
-        </label>
-      </div>
-      -->
-      <button class="btn btn-lg btn-dark btn-block" type="submit">Log in</button>
+          <button class="btn btn-lg btn-dark btn-block" type="submit">Log in</button>
 
-      <p class="mt-5 mb-3 text-muted">Need an account? <a href="/signup">Signup</a></p>
-      <p class="text-muted">Alternatively login or register with: </p><a href="/auth/twitter" class="btn btn-info"><span class="fa fa-twitter"></span> Twitter</a>
+          <p class="mt-5 mb-3 text-muted">Need an account? <a href="/signup">Signup</a></p>
+          <p class="text-muted">Alternatively login or register with: </p><a href="/auth/twitter" class="btn btn-info"><span class="fa fa-twitter"></span> Twitter</a>
 
-    </form>
-    {{/if}}
+        </form>
+      {{/if}}
+    </div>
   </div>
-</div>
+</section>

@@ -1,7 +1,7 @@
 
-<h1 class="my-4">Dashboard
-</h1>
-
+<section class="intro">
+<!--<h2>Dashboard</h2>-->
+</section>
 <ul class="nav nav-tabs" id="dashboardTab" role="tablist">
   <li class="nav-item">
     <a class="nav-link active" id="posts-tab" data-toggle="tab" href="#posts" role="tab" aria-controls="posts" aria-selected="true">Posts</a>
@@ -19,7 +19,6 @@
 <div class="tab-content" id="dashboardContent">
   <div class="tab-pane fade show active" id="posts" role="tabpanel" aria-labelledby="posts-tab">
     <!-- Posts -->
-
         {{#if isArticles}}
         <div class="row">
           {{#each articles}}
@@ -44,7 +43,9 @@
 
     <!-- End posts -->
   </div>
-  <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">pro</div>
+  <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+    {{>profile}}
+  </div>
   <div class="tab-pane fade" id="stats" role="tabpanel" aria-labelledby="stats-tab">
     {{#if isDataAvailable}}
     <div class="row">
