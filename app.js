@@ -106,17 +106,26 @@ app.use(flash());
 // #### Routing of URLs ####
 // #### GET	####
 // Base URL (index)
-app.get('/', function(req, res) {
+app.get('/', function(req, res, next) {
+	var isArticles = true;
 	dbf.getArticlesSorted(function(err, articles) {
 		if(err) {
-			next(err);
+			isArticles = false;
+			res.status(500);
+			return res.render('error', { error: 'Database error.' });
+		}
+		if(articles.length === 0) {
+			isArticles = false;
 		}
 		console.log("Artikkelit haettu sortatusti: ", articles);
+		res.render('home', {
+			user : req.user,
+			userIsLogged : (req.user ? true : false),
+			articles: articles,
+			isArticles: isArticles
+		});
 	})
-	res.render('home', {
-		user : req.user,
-		userIsLogged : (req.user ? true : false)
-	});
+
 });
 
 // Possible Admin page. (Maybe once I integrate this to my own website.)
@@ -268,10 +277,9 @@ app.get('/article/:articleId', function(req, res, next) {
 
   console.log("Artikkelia: ", req.params.articleId, " haetaan");
   dbf.getArticle(req, function(err, data) {
-    //console.log(data);
-
     if(err) {
-      next(err);
+			res.status(500);
+			return res.render('error', { error: 'Database error when trying to find an article.' });
     }
     // Couldn't find an article with given ID.
     if (data.length === 0) {
@@ -349,11 +357,11 @@ app.post('/profile', isLoggedIn, [
 		if(err) {
 			return next(err);
 		}
-		console.log(req.body.password)
+		//console.log(req.body.password)
 		user.comparePassword(req.body.password, function(err, isMatch) {
 			if (err) {
-				console.log(err);
-				return next(err);
+				res.status(500);
+				return res.render('error', { error: 'Error happened when comparing passwords.' });
 			} else {
 				// Modify user's information acquired from the form.
 				if (!(req.body.fname === "")) {
@@ -366,7 +374,8 @@ app.post('/profile', isLoggedIn, [
 				user.save(function (err) {
 					if(err) {
 						console.error(err);
-						return next(err);
+						res.status(500);
+						return res.render('error', { error: 'Database error when trying to save changes.' });
 					}
 				});
 			}
@@ -382,14 +391,15 @@ app.post('/profile', isLoggedIn, [
 app.post('/articlepreview', isLoggedIn, function(req, res) {
 
 	console.log("Article posted!");
-	console.log(req.body.generatedPost);
+	//console.log(req.body.generatedPost);
 	var blogPost = req.body.generatedPost;
 	var title = req.body.title;
 	var dateCreated = new Date();
 
 	User.findById(req.user._id, function(err, user) {
 		if(err) {
-			return next(err);
+			res.status(500);
+			return res.render('error', { error: 'Database error when trying to find an user.' });
 		}
 
 		var newArticle = new Article();
@@ -401,13 +411,13 @@ app.post('/articlepreview', isLoggedIn, function(req, res) {
 		// Add a new article into database.
 		newArticle.save(function(err) {
 			if(err) {
-				console.error(err);
-				return next(err);
+				res.status(500);
+				return res.render('error', { error: 'Database error when trying to save an article.' });
 			}
 		});
 
 	});
-	console.log(dateCreated);
+	//console.log(dateCreated);
 	res.render('articlepreview', {
 		isSuccess: true,
 		userIsLogged: (req.user ? true : false),
@@ -429,7 +439,7 @@ app.post('/article/:articleId', isLoggedIn, [
 	}
 	const comData = matchedData(req);
 
-  console.log("Artikkelia: ", comData, " kommentoidaan");
+  //console.log("Artikkelia: ", comData, " kommentoidaan");
 
 	// Explanation:
 	// Article schema contains an array which contains objects with fields text,
@@ -445,7 +455,6 @@ app.post('/article/:articleId', isLoggedIn, [
 													 {new: true}).populate('comments.author')
 													 .exec(function(err, data) {
 			if(err) {
-				console.log(err)
 				return res.render('commentfailed', {errors: err});
 			}
 			res.redirect('/article/'+req.params.articleId);
@@ -471,10 +480,22 @@ app.post('/deleteUser', isLoggedIn, function(req, res){
   // Perhaps also remove all blog posts by this user as well.
 	User.findByIdAndRemove({ _id: req.user._id }, function(err, user) {
 		if(err) {
-			return next(err);
-		} else {
-			console.log("user removed");
+			res.status(500);
+			return res.render('error', { error: 'Database error when trying to delete user.' });
 		}
+		console.log("user removed");
+		TwitterData.findOneAndRemove({author: req.user._id}, function(err, data) {
+			if(err) {
+				res.status(500);
+				return res.render('error', { error: 'Database error when trying to delete tweetdata.' });
+			}
+			Articles.find({author: req.user._id}, function(err, articles) {
+				if(err) {
+					res.status(500);
+					return res.render('error', { error: 'Database error when trying to delete articles.' });
+				}
+			});
+		});
 	});
 	req.logout();
 	res.redirect('/');

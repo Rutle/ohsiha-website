@@ -61,28 +61,21 @@ module.exports = {
       callback(null, user.fullName);
     });
   },
+  // 1. Get articles from database and sort in descending order by creation date.
+  // 2. Populate author field and select 3 fields that are used for the virtual function to get the fullName field.
+  // 3. Select extra fields required to display enough information and exclude the _id fields.
   getArticlesSorted: function (callback) {
     Article.find({})
            .sort({dateCreated: 'desc'})
-           .populate('author')
+           .populate('author', 'local.firstName local.lastName twitter.displayName -_id')
+           //.populate({ path: 'author', select: 'fullName' })
+           .select('title content dateCreated formatted_date articleId -_id')
            .exec(function(err, articles) {
 
       if (err) {
           callback(err, null);
       }
-      // Only take what we need instead of sending full data document background
-      // containing personal information.
-      var articlesArray = [];
-      for (var i = 0; i < articles.length; i++) {
-        var tempA = {};
-        tempA.title = articles[i].title;
-        tempA.author = articles[i].author.fullName;
-        tempA.content = articles[i].content;
-        tempA.dateCreated = new Date().toDateString(articles[i].dateCreated);
-        tempA.articleId = articles[i].articleId;
-        articlesArray.push(tempA);
-      }
-      callback(null, articlesArray);
+      callback(null, articles);
     });
   }
 }

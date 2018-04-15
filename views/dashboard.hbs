@@ -27,12 +27,12 @@
             <!-- Blog Post -->
             <div class="card mb-4">
               <div class="card-body">
-                <h2 class="card-title">{{title}}</h2>
-                <p class="card-text">{{content}}</p>
-                <a href="/article/{{articleId}}" class="btn btn-lg btn-dark btn-sm">Read More &rarr;</a>
+                <h2 class="card-title">{{this.title}}</h2>
+                <p class="card-text">{{this.content}}</p>
+                <a href="/article/{{this.articleId}}" class="btn btn-lg btn-dark btn-sm">Read More &rarr;</a>
               </div>
               <div class="card-footer text-muted">
-                Posted on {{dateCreated}} by {{author}}
+                Posted on {{this.formatted_date}} by {{this.author.fullName}}
               </div>
             </div>
           </div>

@@ -43,5 +43,12 @@ var articleSchema = mongoose.Schema({
   }]
 });
 
+articleSchema.virtual('formatted_date').get(function() {
+  return new Date(this.dateCreated).toDateString();
+});
+articleSchema.set('toObject', { getters: true });
+articleSchema.set('toObject', { virtuals: true });
+articleSchema.set('toJSON', { virtuals: true });
+
 articleSchema.plugin(autoIncrement, { field: 'articleId' });
 module.exports = mongoose.model('Article', articleSchema);

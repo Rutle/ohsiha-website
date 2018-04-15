@@ -2,20 +2,13 @@ function drawWordCloud(wordData) {
 
   var fill = d3.scale.category20();
     var data = [{word:"Hello",weight:20},{word:"World",weight:10},{word:"Normally",weight:25},{word:"You",weight:15},{word:"Want",weight:30},{word:"More",weight:12},{word:"Words",weight:8},{word:"But",weight:18},{word:"Who",weight:22},{word:"Cares",weight:27}];
-    console.log(data);
-    console.log(wordData);
+
     width = $(document).width();
     widthL = $('#leftS').width();
     widthR = $('#rightS').width();
     height = $(document).height();
     heightT = $('#navtop').height();
 
-    console.log("width: ", width);
-    console.log("widthL: ", widthL);
-    console.log("widthR: ", widthR)
-    console.log("heightT: ", heightT)
-    console.log("height: ", height);
-    console.log(width-widthL-widthR);
   d3.layout.cloud().size([width-widthL-widthR-50, height-350])
         .words(wordData)
         //.padding(5)

@@ -31,7 +31,7 @@ exports.getDBoard = function(req, res){
       console.log("Twitter data is available");
     }
 
-    dbf.getArticles(req, function(err, articles) {
+    dbf.getArticlesSorted(function(err, articles) {
       if (articles.length === 0) {
         isArticles = false;
         console.log("No articles.");
@@ -55,6 +55,7 @@ exports.getDBoard = function(req, res){
         }
         console.log("dataa oli saatavilla");
       }
+      console.log(articles);
       res.render('dashboard', {
         userIsLogged: (req.user ? true : false),
         user: req.user,

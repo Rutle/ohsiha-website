@@ -30,13 +30,13 @@ userSchema.virtual('fullName').get(function() {
   if (this.twitter.displayName === undefined) {
     if (this.local.firstName === undefined &&
         this.local.lastName === undefined) {
-      name = "Unknown"
+      name = "Unknown";
     } else if (this.local.firstName === undefined &&
                this.local.lastName !== undefined) {
-      name = this.local.lastName
+      name = this.local.lastName;
     } else if (this.local.firstName !== undefined &&
                this.local.lastName === undefined) {
-      name = this.local.firstName
+      name = this.local.firstName;
     } else {
       name = this.local.firstName+" "+this.local.lastName;
     }

@@ -19,6 +19,7 @@
   </head>
 
   <body>
+
   <div class="main_wrap">
     <div class="navi">
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark nav-shadow fixed-top" id="topnav"> <!-- fixed-top class for sticking it to the top + padding-top: 6rem-->
@@ -58,21 +59,22 @@
         </ul>
   	  </div>
       </div>
-    </div>
-
     </nav>
-
+  </div>
 
     <div class="main">
       <div id="leftS"></div>
 
       <div class="contentContainer">
-        <div class="container">
-
+        <div style="position:relative; height: 100%">
+          <div style="overflow-y: auto; position: absolute; top: 62px; right:0; bottom: 0; left: 0;">
+            <div class="container">
 
           {{{body}}}
+          </div>
         </div>
-      </div><!-- /.container -->
+      </div>
+      </div>
       <div id="rightS"></div>
     </div>
     <div class="footer border-top border-dark">
