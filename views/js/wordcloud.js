@@ -9,7 +9,7 @@ function drawWordCloud(wordData) {
     height = $(document).height();
     heightT = $('#navtop').height();
 
-  d3.layout.cloud().size([width-widthL-widthR-50, height-350])
+  d3.layout.cloud().size([width-widthL-widthR-200, height-350])
         .words(wordData)
         //.padding(5)
         .rotate(function() { return ~~(Math.random() * 2) * 90; })
@@ -26,7 +26,7 @@ function drawWordCloud(wordData) {
           //.attr("height", height-300)
           .classed("svg-content", true)
         .append("g")
-          .attr("transform", "translate(" + [width/3, height/3] + ")")
+          .attr("transform", "translate(" + [(width/3)+20, height/3] + ")")
         .selectAll("text")
           .data(words)
         .enter().append("text")

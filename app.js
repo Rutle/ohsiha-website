@@ -134,7 +134,7 @@ app.get(['/blog','/blog/:page(\\d+)/'], function(req, res, next) {
 			isArticles = false;
 		}
 
-		//var pageArticles = articles.slice(((currentPage-1)*5), (currentPage*5));
+		var pageArticles = articles.slice(((currentPage-1)*5), (currentPage*5));
 		var articleCount = articles.length;
 		var maxPageCount = Math.floor(articleCount/5);
 
@@ -376,6 +376,7 @@ app.post('/profile', isLoggedIn, [
 ], function(req, res) {
 	const errors = validationResult(req);
 	if (!errors.isEmpty()) {
+		console.log(errors.mapped());
 		return res.render('profileUpdated', {
 			isSuccess: false,
 			errors: errors.mapped(),
@@ -384,6 +385,7 @@ app.post('/profile', isLoggedIn, [
 		});
 	}
 	const userData = matchedData(req);
+	console.log("userData: ", userData)
 	User.findOne({'local.email': req.user.local.email}, function(err, user) {
 		if(err) {
 			return next(err);
@@ -393,7 +395,8 @@ app.post('/profile', isLoggedIn, [
 			if (err) {
 				res.status(500);
 				return res.render('error', { error: 'Error happened when comparing passwords.' });
-			} else {
+			}
+			if(isMatch) {
 				// Modify user's information acquired from the form.
 				if (!(req.body.fname === "")) {
 					user.local.firstName = userData.fname;
@@ -409,12 +412,20 @@ app.post('/profile', isLoggedIn, [
 						return res.render('error', { error: 'Database error when trying to save changes.' });
 					}
 				});
+				res.render('profileUpdated', {
+					userIsLogged: (req.user ? true : false),
+					user: req.user,
+					isSuccess: true,
+				});
+			} else {
+				return res.render('profileUpdated', {
+					isSuccess: false,
+					errors: ["Wrong password"],
+					userIsLogged: (req.user ? true : false),
+					user: req.user
+				});
 			}
 		});
-	});
-	res.render('profileUpdated', {
-		userIsLogged: (req.user ? true : false),
-		user: req.user
 	});
 });
 

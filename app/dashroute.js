@@ -207,7 +207,7 @@ exports.postDBoard = function(req, res, next) {
 
   // Fetch/update button.
   if (req.body.form === "fetchData") {
-    twit.getTweets(req.user.twitter.id, 3, function(err, result) {
+    twit.getTweets(req.user.twitter.id, 200, function(err, result) {
       TwitterData.findOne({'author': req.user._id}, function(err, tweetData) {
         if (err)
           return next(err);
@@ -272,6 +272,36 @@ exports.postDBoard = function(req, res, next) {
           });
         })
       }
+    });
+  } else if (req.body.form === "generateWordCloud") {
+    TwitterData.findOne({'author': req.user._id}, function(err, tweetData) {
+      if (err) {
+        return next(err);
+      }
+      if(!tweetData) {
+
+        console.log("No twitter data.");
+      // A document was found.
+      }
+      console.log("paasstiin");
+      var wcData = {};
+      var wcArray = [];
+      for (var j = 0; j < tweetData.content.length; j++) {
+        var tempResArray = [];
+        tempResArray = tweetData.content[j].toLowerCase().split(' ');
+        for(var k = 0; k < tempResArray.length; k++) {
+          if(!wcData[tempResArray[k]]) {
+            wcData[tempResArray[k]] = 0;
+          }
+          wcData[tempResArray[k]]++;
+        }
+      }
+      for(var item in wcData) {
+        wcArray.push({text: item, size: wcData[item] + Math.floor(Math.random() * 90)});
+      }
+      console.log("wcArray: ", wcArray);
+
+      return res.status(200).send({wordData: wcArray});
     });
   }
 

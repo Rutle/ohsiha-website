@@ -1,8 +1,9 @@
 // Custom scripts for the website
 $(function () {
+  sessionStorage.fetched === '0'
   drawWordCloud(wordcloudData);
 
-  
+
   $('#fetchData').on('submit', function (e) {
     e.preventDefault();
 	  // var formID = $(this).parents("form").attr("name");
@@ -33,6 +34,9 @@ $(function () {
         $('#gAlertMessage').text('There is data to generate a post.');
         $('#gAlertMessage').removeClass('alert-danger');
         $('#gAlertMessage').addClass('alert-success');
+
+        // Web storage usage:
+        sessionStorage.setItem('fetched', '1');
 
       },
       error: function(jqXHR, textStatus, err) {
@@ -69,6 +73,7 @@ $(function () {
         //console.log(wordcloudData);
         //drawWordCloud(wordcloudData);
 
+
       },
       error: function(jqXHR, textStatus, errorThrown, data) {
         console.log(errorThrown);
@@ -78,6 +83,11 @@ $(function () {
         $('#gAlertMessage').empty();
         $('#gAlertMessage').removeAttr('hidden');
         $('#gAlertMessage').text(jqXHR.responseText);
+        $('#generatePostSubmit').prop('disabled', false);
+        $('#generatePostSubmit').trigger('blur');
+        $('#generatePostSubmit').val('Generate');
+        $('#gAlertMessage').removeClass('alert-success');
+        $('#gAlertMessage').addClass('alert-danger');
       }
     })
 
@@ -92,4 +102,56 @@ $(function () {
 
   })
 
+  $('#dashboardTab a[href="#stats"]').on('click', function (e) {
+    //e.preventDefault()
+    // Generate new wordcloud because new data was fetched.
+    console.log("Session storage fetched on" +sessionStorage.fetched);
+    if(sessionStorage.fetched === '1') {
+      $.ajax({
+        type: 'POST',
+        url: 'http://localhost:5000/dashboard',
+        //url: 'https://ohsiha-webmc.herokuapp.com/dashboard',
+        data: {form: 'generateWordCloud'},
+        dataType: 'json',
+        success: function(data) {
+          //console.log("title: ", data.title);
+          //console.log(JSON.stringify(data));
+          //$('#gAlertMessage').text("There is data to generate a post.");
+          //$('#title').attr('value', data.title);
+          //$('#author').attr('value', data.author);
+          //$('#generatedPost').val(data.data);
+          //$('#articlepreview').removeAttr('hidden');
+          //$('#generatePostSubmit').val('Generate');
+          //$('#generatePostSubmit').prop('disabled', false);
+          //$('#generatePostSubmit').trigger('blur');
+          //wordcloudData = data.wordcloudData;
+          //console.log(wordcloudData);
+          //drawWordCloud(wordcloudData);
+          console.log("Data haettu: ", data.wordData);
+          d3.select("svg").remove();
+          drawWordCloud(data.wordData)
+          sessionStorage.setItem('fetched', '0');
+          //$(this).tab('show')
+
+        },
+        error: function(jqXHR, textStatus, errorThrown, data) {
+          console.log(errorThrown);
+          console.log(jqXHR);
+          console.log(textStatus);
+          console.log(jqXHR.responseText);
+          //$(this).tab('show');
+          /*
+          $('#gAlertMessage').empty();
+          $('#gAlertMessage').removeAttr('hidden');
+          $('#gAlertMessage').text(jqXHR.responseText);
+          $('#generatePostSubmit').prop('disabled', false);
+          $('#generatePostSubmit').trigger('blur');
+          $('#generatePostSubmit').val('Generate');
+          $('#gAlertMessage').removeClass('alert-success');
+          $('#gAlertMessage').addClass('alert-danger');
+          */
+        }
+      })
+    }
+  })
 });

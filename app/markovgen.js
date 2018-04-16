@@ -6,15 +6,16 @@ module.exports = {
 
     // Similar to tweets.
     const options = {
-      maxLength: 140,
+      maxLength: 200,
       minWords: 10,
       minScore: 25,
+      maxTries: 100,
       filter: result => {
         return result.string.endsWith('.');
       }
     };
 
-    let mg = new Markov(arrayOfTweets, options);
+    let mg = new Markov(arrayOfTweets);
 
     // First time using promises. First it builds corpus. Once it's finished
     // it will generate sentences that will get inserted into the array. Finally
@@ -33,6 +34,7 @@ module.exports = {
         		    console.log(result);
               },
               function(error) {
+                //callback("error", null);
         			  console.log("eka: ", error.message);
         		  }
     		    );
@@ -43,11 +45,11 @@ module.exports = {
         function(result) {
     	    console.log("data:", result.length);
           if(result.length === 0) {
+            console.log("NODATA");
             callback("NODATA", null);
           } else {
             callback(null, result);
           }
       });
-
   }
 }
