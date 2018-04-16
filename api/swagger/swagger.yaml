@@ -1,7 +1,7 @@
 swagger: "2.0"
 info:
-  description: "This is API for Ohjelmallien sisällönhallinta project website."
-  version: "0.0.1"
+  description: "This is API for [Ohjelmallien sisällönhallinta](https://ohsiha-webmc.herokuapp.com) project website."
+  version: "0.0.2"
   title: "Markov chain blogpost website API."
   contact:
     email: "jussi.m.ristimaki@student.tut.fi"

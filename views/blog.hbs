@@ -15,12 +15,12 @@
         {{#compare prevPage "===" 0}}
         {{else}}
         <li class="page-item">
-          <a class="page-link text-secondary" href="/{{prevPage}}">Previous</a>
+          <a class="page-link text-secondary" href="/blog/{{prevPage}}">Previous</a>
         </li>
         {{/compare}}
         {{#compare prevPage "===" 0}}
         {{else}}
-        <li class="page-item"><a class="page-link text-secondary" href="/{{prevPage}}">{{prevPage}}</a></li>
+        <li class="page-item"><a class="page-link text-secondary" href="/blog/{{prevPage}}">{{prevPage}}</a></li>
         {{/compare}}
         <li class="page-item">
           <span class="page-link bg-dark text-white">
@@ -30,9 +30,9 @@
         </li>
         {{#compare nextPage ">" maxPages}}
         {{else}}
-        <li class="page-item"><a class="page-link text-secondary" href="/{{nextPage}}">{{nextPage}}</a></li>
+        <li class="page-item"><a class="page-link text-secondary" href="/blog/{{nextPage}}">{{nextPage}}</a></li>
         <li class="page-item">
-          <a class="page-link text-secondary" href="/{{nextPage}}">Next</a>
+          <a class="page-link text-secondary" href="/blog/{{nextPage}}">Next</a>
         </li>
         {{/compare}}
       </ul>

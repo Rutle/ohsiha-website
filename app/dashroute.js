@@ -216,7 +216,7 @@ exports.postDBoard = function(req, res, next) {
         if (tweetData) {
           tweetData.content = result;
           tweetData.dateModified = new Date();
-          console.log("existing: ", tweetData);
+          //console.log("existing: ", tweetData);
           tweetData.save(function(err) {
             if(err) {
               console.error(err);
@@ -228,7 +228,7 @@ exports.postDBoard = function(req, res, next) {
           var newTweetData = new TwitterData();
           newTweetData.author = req.user._id;
           newTweetData.content = result;
-          console.log("created new: ", newTweetData)
+          //console.log("created new: ", newTweetData)
           newTweetData.save(function(err) {
             if(err) {
               console.error(err);
@@ -251,15 +251,17 @@ exports.postDBoard = function(req, res, next) {
       if (!tweetData) {
         return res.status(500).send('There was no data to generate a post.');
       } else {
-        markovGen.getSentences(tweetData.content, 2, function(err, result) {
+        markovGen.getSentences(tweetData.content, 5, function(err, result) {
           if (err) {
             return res.status(500).send('There was not enough data to generate a post.');
           }
 
           var data = "";
-          for (var i = 0; i < 2; i++) {
-            console.log("postaus: ["+result[i].string+"]");
-            data += result[i].string + " ";
+          for (var i = 0; i < result.length; i++) {
+            //console.log("postaus: ["+result[i].string+"]");
+            var tempstring = result[i].string;
+            tempstring = tempstring[0].toUpperCase()+tempstring.substr(1);
+            data += tempstring+ ". "
 
           }
           return res.status(200).send({
@@ -299,7 +301,7 @@ exports.postDBoard = function(req, res, next) {
       for(var item in wcData) {
         wcArray.push({text: item, size: wcData[item] + Math.floor(Math.random() * 90)});
       }
-      console.log("wcArray: ", wcArray);
+      //console.log("wcArray: ", wcArray);
 
       return res.status(200).send({wordData: wcArray});
     });

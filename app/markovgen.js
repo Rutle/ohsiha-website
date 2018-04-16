@@ -6,16 +6,11 @@ module.exports = {
 
     // Similar to tweets.
     const options = {
-      maxLength: 200,
-      minWords: 10,
-      minScore: 25,
-      maxTries: 100,
-      filter: result => {
-        return result.string.endsWith('.');
-      }
+      minWords: 5,
+      maxTries: 10,
     };
 
-    let mg = new Markov(arrayOfTweets);
+    let mg = new Markov(arrayOfTweets, options);
 
     // First time using promises. First it builds corpus. Once it's finished
     // it will generate sentences that will get inserted into the array. Finally
