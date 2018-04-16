@@ -3,7 +3,7 @@ const Markov = require('markov-strings');
 
 module.exports = {
   getSentences: function(arrayOfTweets, sentenceCount, callback) {
-    /*
+
     // Similar to tweets.
     const options = {
       maxLength: 140,
@@ -13,10 +13,8 @@ module.exports = {
         return result.string.endsWith('.');
       }
     };
-    */
 
-
-    let mg = new Markov(arrayOfTweets);
+    let mg = new Markov(arrayOfTweets, options);
 
     // First time using promises. First it builds corpus. Once it's finished
     // it will generate sentences that will get inserted into the array. Finally

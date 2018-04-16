@@ -25,6 +25,7 @@ var userSchema = mongoose.Schema({
   },
 });
 
+// Virtual getter to get a name of the user.
 userSchema.virtual('fullName').get(function() {
   var name = "";
   if (this.twitter.displayName === undefined) {

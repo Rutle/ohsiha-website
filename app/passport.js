@@ -11,16 +11,13 @@
 // Done following this tutorial: https://scotch.io/tutorials/easy-node-authentication-setup-and-local
 
 
-// For basic local username/password authentication
 var LocalStrategy     = require('passport-local').Strategy;
 var TwitterStrategy   = require('passport-twitter').Strategy;
 var User              = require('../app/models/user');
 
-//var authData          = require('./auth');
 
 module.exports = function(passport) {
   console.log('passport configuraatio');
-  // To get authentication to work properly and have proper persistent sessions
 
   /* serializeUser
      Serialize authenticated user into the sessions by ID.

@@ -14,7 +14,7 @@ exports.getDBoard = function(req, res){
 	var dataAvailable = true;
   var isArticles = true;
   var localLink = true;
-	if (req.user.twitter.token === undefined) {
+	if (req.user.twitter.id === undefined) {
 		twitterLink = false;
 	}
   if (req.user.local.email === undefined) {

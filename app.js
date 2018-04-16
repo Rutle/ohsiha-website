@@ -114,7 +114,7 @@ app.get('/', function(req, res, next) {
 });
 
 app.get(['/blog','/blog/:page(\\d+)/'], function(req, res, next) {
-	console.log(req.params.page, " Type: ", typeof(req.params.page));
+	//console.log(req.params.page, " Type: ", typeof(req.params.page));
 	var currentPage = 0;
 	if(typeof(req.params.page) === 'undefined' || req.params.page === "0" || req.params.page === "1") {
 		// Main page
@@ -133,22 +133,18 @@ app.get(['/blog','/blog/:page(\\d+)/'], function(req, res, next) {
 		if(articles.length === 0) {
 			isArticles = false;
 		}
-		//console.log("CurrentPage: ", currentPage);
-		//console.log("alusta: ", ((currentPage-1)*5), " asti: ", (currentPage*5));
-		var pageArticles = articles.slice(((currentPage-1)*5), (currentPage*5));
-		//console.log("artikkelit: ", pageArticles);
+
+		//var pageArticles = articles.slice(((currentPage-1)*5), (currentPage*5));
 		var articleCount = articles.length;
-		var maxPageCount = 0;
-		//5 articles previews per page.
 		var maxPageCount = Math.floor(articleCount/5);
+
+		//5 articles previews per page.
 		if (articleCount % 5 === 0) {
 			maxPageCount = Math.floor(articleCount/5);
 		} else {
 			maxPageCount = Math.floor(articleCount/5) + 1
 		}
-		//var remainder = articleCount - (pages*5);
-		//console.log("Sivut: ", pages, " Seuraavalle sivulle jaa: ", remainder);
-		//console.log("Artikkelit haettu sortatusti: ", articles);
+
 		res.render('blog', {
 			user : req.user,
 			userIsLogged : (req.user ? true : false),
@@ -210,7 +206,7 @@ app.get('/login', function(req, res){
   if((loginMessage.length > 0)) {
     successMessage = false;
   }
-	console.log(loginMessage[0]);
+	//console.log(loginMessage[0]);
   res.render('login', {
     message: loginMessage[0],
     isSuccess: successMessage,
@@ -302,7 +298,7 @@ app.get('/unlink/local', function(req, res) {
 // twitter unlinking
 app.get('/unlink/twitter', function(req, res) {
 	var user           = req.user;
-	user.twitter.token = undefined;
+	user.twitter.id = undefined;
 	user.save(function(err) {
 		res.redirect('/dashboard');
 	});
@@ -310,7 +306,7 @@ app.get('/unlink/twitter', function(req, res) {
 
 app.get('/article/:articleId', function(req, res, next) {
 
-  console.log("Artikkelia: ", req.params.articleId, " haetaan");
+  //console.log("Artikkelia: ", req.params.articleId, " haetaan");
   dbf.getArticle(req, function(err, data) {
     if(err) {
 			res.status(500);
@@ -393,17 +389,17 @@ app.post('/profile', isLoggedIn, [
 			return next(err);
 		}
 		//console.log(req.body.password)
-		user.comparePassword(req.body.password, function(err, isMatch) {
+		user.comparePassword(userData.password, function(err, isMatch) {
 			if (err) {
 				res.status(500);
 				return res.render('error', { error: 'Error happened when comparing passwords.' });
 			} else {
 				// Modify user's information acquired from the form.
 				if (!(req.body.fname === "")) {
-					user.local.firstName = req.body.fname;
+					user.local.firstName = userData.fname;
 				}
 				if (!(req.body.lname === "")) {
-					user.local.lastName = req.body.lname;
+					user.local.lastName = userData.lname;
 				}
 				// Update information.
 				user.save(function (err) {
@@ -483,6 +479,8 @@ app.post('/article/:articleId', isLoggedIn, [
 	// '$push' to insert the object into the array. With the 'new: true' we recieve
 	// the new updated document back to which we then use .populate functions
 	// to fetch the author objects from User documents.
+	// Getting updated document back is no longer relevant as I'm just redirecting
+	// back to the article. Still leaving it back there.
 	Article.findOneAndUpdate({'articleId':req.params.articleId},
 													 {$push:{comments: comment} },
 													 {new: true}).populate('comments.author')
