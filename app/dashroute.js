@@ -41,25 +41,6 @@ exports.getDBoard = function(req, res){
         console.log("No articles.");
       }
 
-      var wcData = {};
-      var wcArray = [];
-      if(dataAvailable) {
-        for (var j = 0; j < tweetData.content.length; j++) {
-          var tempResArray = [];
-          tempResArray = tweetData.content[j].toLowerCase().split(' ');
-          for(var k = 0; k < tempResArray.length; k++) {
-            if(!wcData[tempResArray[k]]) {
-              wcData[tempResArray[k]] = 0;
-            }
-            wcData[tempResArray[k]]++;
-          }
-        }
-        for(var item in wcData) {
-          wcArray.push({text: item, size: wcData[item] + Math.floor(Math.random() * 90)});
-        }
-        console.log("dataa oli saatavilla");
-      }
-      console.log(articles);
       res.render('dashboard', {
         userIsLogged: (req.user ? true : false),
         user: req.user,
@@ -68,7 +49,7 @@ exports.getDBoard = function(req, res){
         isDataAvailable: dataAvailable,
         isArticles: isArticles,
         articles: articles,
-        wordData: JSON.stringify(wcArray)
+        //wordData: JSON.stringify(wcArray)
       });
     })
   })
@@ -256,19 +237,26 @@ exports.postDBoard = function(req, res, next) {
             return res.status(500).send('There was not enough data to generate a post.');
           }
 
-          var data = "";
+          var data = {};
+          data.refs = [];
+          data.data = "";
+
           for (var i = 0; i < result.length; i++) {
-            //console.log("postaus: ["+result[i].string+"]");
             var tempstring = result[i].string;
             tempstring = tempstring[0].toUpperCase()+tempstring.substr(1);
-            data += tempstring+ ". "
+            data.data += tempstring+ ". ";
+            result[i].refs.forEach(function(element) {
+              data.refs.push(element.string);
+            });
 
           }
+          console.log(data.refs);
           return res.status(200).send({
             userIsLogged: (req.user ? true : false),
             title: "Clever musings.",
             dateCreated: new Date().toDateString(),
-            data: data,
+            data: data.data,
+            refs: data.refs,
             author: req.user.twitter.displayName,
             //wordcloudData: wcArray
           });
@@ -281,11 +269,11 @@ exports.postDBoard = function(req, res, next) {
         return next(err);
       }
       if(!tweetData) {
-
-        console.log("No twitter data.");
+        return res.status(500).send('There was no data to generate a wordcloud.');
+        //console.log("No twitter data.");
       // A document was found.
       }
-      console.log("paasstiin");
+      //console.log("paasstiin");
       var wcData = {};
       var wcArray = [];
       for (var j = 0; j < tweetData.content.length; j++) {

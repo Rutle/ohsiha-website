@@ -1,7 +1,7 @@
 // Custom scripts for the website
 $(function () {
-  sessionStorage.fetched === '0'
-  drawWordCloud(wordcloudData);
+
+  //drawWordCloud(wordcloudData);
 
 
   $('#fetchData').on('submit', function (e) {
@@ -19,8 +19,8 @@ $(function () {
 	// Ajax post call to make server side fetch the tweet data for current user.
     $.ajax({
       type: 'POST',
-      //url: 'http://localhost:5000/dashboard',
-      url: 'https://ohsiha-webmc.herokuapp.com/dashboard',
+      url: 'http://localhost:5000/dashboard',
+      //url: 'https://ohsiha-webmc.herokuapp.com/dashboard',
       data: {form: 'fetchData'},
       dataType: 'json',
       success: function (data) {
@@ -36,12 +36,13 @@ $(function () {
         $('#gAlertMessage').addClass('alert-success');
 
         // Web storage usage:
-        sessionStorage.setItem('fetched', '1');
+        sessionStorage.setItem('generateWC', '1');
 
       },
       error: function(jqXHR, textStatus, err) {
       // Perhaps send error message from server side and load it into the warning box.
       alert('text status '+textStatus+', err '+err)
+      sessionStorage.setItem('generateWC', '0');
       }
     });
   });
@@ -54,8 +55,8 @@ $(function () {
 
     $.ajax({
       type: 'POST',
-      //url: 'http://localhost:5000/dashboard',
-      url: 'https://ohsiha-webmc.herokuapp.com/dashboard',
+      url: 'http://localhost:5000/dashboard',
+      //url: 'https://ohsiha-webmc.herokuapp.com/dashboard',
       data: {form: 'generatePost'},
       dataType: 'json',
       success: function(data) {
@@ -69,20 +70,17 @@ $(function () {
         $('#generatePostSubmit').val('Generate');
         $('#generatePostSubmit').prop('disabled', false);
         $('#generatePostSubmit').trigger('blur');
-        //wordcloudData = data.wordcloudData;
-        //console.log(wordcloudData);
-        //drawWordCloud(wordcloudData);
 
 
       },
       error: function(jqXHR, textStatus, errorThrown, data) {
-        console.log(errorThrown);
-        console.log(jqXHR);
-        console.log(textStatus);
-        console.log(jqXHR.responseText);
         $('#gAlertMessage').empty();
         $('#gAlertMessage').removeAttr('hidden');
-        $('#gAlertMessage').text(jqXHR.responseText);
+        if(jqXHR.responseText === undefined) {
+          $('#gAlertMessage').text("Something went wrong.");
+        } else {
+          $('#gAlertMessage').text(jqXHR.responseText);
+        }
         $('#generatePostSubmit').prop('disabled', false);
         $('#generatePostSubmit').trigger('blur');
         $('#generatePostSubmit').val('Generate');
@@ -101,16 +99,26 @@ $(function () {
     $('#articlepreview').attr('hidden', true);
 
   })
-
-  $('#dashboardTab a[href="#stats"]').on('click', function (e) {
+  /*
+  $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+    e.target // newly activated tab
+    e.relatedTarget // previous active tab
+    console.log("e.target: ", e.target);
+    console.log("e.relatedTarget: ", e.relatedTarget);
+  })*/
+  $('#dashboardTab a[href="#stats"]').on('shown.bs.tab', function (e) {
     //e.preventDefault()
     // Generate new wordcloud because new data was fetched.
-    console.log("Session storage fetched on" +sessionStorage.fetched);
-    if(sessionStorage.fetched === '1') {
+    $('#wcMessage').prop("hidden", true);
+    $("#spinner1").show();
+    $(this).tab('show');
+    console.log("Session storage fetched on " +sessionStorage.generateWC);
+    //console.log(this);
+    if(sessionStorage.generateWC === '1') {
       $.ajax({
         type: 'POST',
-        //url: 'http://localhost:5000/dashboard',
-        url: 'https://ohsiha-webmc.herokuapp.com/dashboard',
+        url: 'http://localhost:5000/dashboard',
+        //url: 'https://ohsiha-webmc.herokuapp.com/dashboard',
         data: {form: 'generateWordCloud'},
         dataType: 'json',
         success: function(data) {
@@ -120,36 +128,28 @@ $(function () {
           //$('#title').attr('value', data.title);
           //$('#author').attr('value', data.author);
           //$('#generatedPost').val(data.data);
-          //$('#articlepreview').removeAttr('hidden');
+          $('#wcMessage').prop("hidden", true);
+          //$('#spinner').prop("hidden", true);
+          $('#spinner').hide();
           //$('#generatePostSubmit').val('Generate');
           //$('#generatePostSubmit').prop('disabled', false);
           //$('#generatePostSubmit').trigger('blur');
           //wordcloudData = data.wordcloudData;
           //console.log(wordcloudData);
           //drawWordCloud(wordcloudData);
-          console.log("Data haettu: ", data.wordData);
+          //console.log("Data haettu: ", data.wordData);
           d3.select("svg").remove();
           drawWordCloud(data.wordData)
-          sessionStorage.setItem('fetched', '0');
-          //$(this).tab('show')
+          sessionStorage.setItem('generateWC', '0');
 
         },
         error: function(jqXHR, textStatus, errorThrown, data) {
-          console.log(errorThrown);
-          console.log(jqXHR);
-          console.log(textStatus);
-          console.log(jqXHR.responseText);
-          //$(this).tab('show');
-          /*
-          $('#gAlertMessage').empty();
-          $('#gAlertMessage').removeAttr('hidden');
-          $('#gAlertMessage').text(jqXHR.responseText);
-          $('#generatePostSubmit').prop('disabled', false);
-          $('#generatePostSubmit').trigger('blur');
-          $('#generatePostSubmit').val('Generate');
-          $('#gAlertMessage').removeClass('alert-success');
-          $('#gAlertMessage').addClass('alert-danger');
-          */
+          console.log("error text", jqXHR.responseText);
+
+          $('#wcMessage').empty();
+          $('#wcMessage').removeAttr('hidden');
+          $("#spinner").hide();
+          $('#wcMessage').text(jqXHR.responseText);
         }
       })
     }

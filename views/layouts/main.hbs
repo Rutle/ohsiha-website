@@ -12,7 +12,7 @@
     <!-- Bootstrap core CSS -->
     <link href="/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
-
+    <!--<script defer src="https://use.fontawesome.com/releases/v5.0.10/js/all.js" integrity="sha384-slN8GvtUJGnv6ca26v8EzVaR9DC58QEwsIk9q1QXdCU8Yu8ck/tL/5szYlBbqmS+" crossorigin="anonymous"></script>-->
     <!-- Custom styles for this template -->
     <link href="/css/custom.css" rel="stylesheet">
 
@@ -78,12 +78,13 @@
           <div style="overflow-y: auto; position: absolute; top: 62px; right:0; bottom: 0; left: 0;">
             <div class="container">
 
-          {{{body}}}
+              {{{body}}}
+            </div>
           </div>
         </div>
       </div>
+      <div id="rightS">
       </div>
-      <div id="rightS"></div>
     </div>
     <div class="footer border-top border-dark">
       <div class="container">
@@ -108,5 +109,8 @@
     <!--<script src="/d3-cloud/d3.layout.cloud.js"></script>-->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-cloud/1.2.5/d3.layout.cloud.js"></script>
     <script src="/js/wordcloud.js"></script>
+    <script>
+      sessionStorage.setItem('generateWC', '{{#if isDataAvailable}}1{{else}}0{{/if}}');
+    </script>
   </body>
 </html>

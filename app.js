@@ -338,9 +338,9 @@ app.get('/article/:articleId', function(req, res, next) {
 });
 
 app.get('/user/:userId', function(req, res, next) {
-  console.log("User: ", req.params.userId, " haettu");
+  //console.log("User: ", req.params.userId, " haettu");
   dbf.getUser(req, function(err, data) {
-    console.log(data);
+    //console.log(data);
   });
 });
 
@@ -385,7 +385,7 @@ app.post('/profile', isLoggedIn, [
 		});
 	}
 	const userData = matchedData(req);
-	console.log("userData: ", userData)
+	//console.log("userData: ", userData)
 	User.findOne({'local.email': req.user.local.email}, function(err, user) {
 		if(err) {
 			return next(err);
