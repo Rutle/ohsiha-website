@@ -9,7 +9,7 @@ info:
 # during dev, should point to your local machine
 host: localhost:10010
 # basePath prefixes all resource paths
-basePath: /v2/
+basePath: /v1/
 #
 schemes:
   # tip: remove http to make production-grade
@@ -30,7 +30,7 @@ paths:
       # used as the method name of the controller
       operationId: users
       responses:
-        "200":
+        200:
           description: Success
           schema:
             # a pointer to a definition
@@ -40,7 +40,7 @@ paths:
           description: Error
           schema:
             $ref: "#/definitions/ErrorResponse"
-  /users/{userID}:
+  /users/{userId}:
     # binds a127 app logic to a route
     x-swagger-router-controller: users
     get:
@@ -48,17 +48,23 @@ paths:
       # used as the method name of the controller
       operationId: getUserById
       parameters:
-        - name: userID
-          in: path
-          description: ID of the user to get.
-          required: true
+        - in: path
+          name: userId
           type: integer
+          required: true
+          description: ID of the user to retrieve.
       responses:
-        "200":
+        200:
           description: Success
           schema:
             # a pointer to a definition
             $ref: "#/definitions/User"
+        400:
+          description: "Bad request. User ID must be an integer and bigger than 0."
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        404:
+          description: "A user with the specified ID was not found."
         # responses may fall through to errors
         default:
           description: Error
@@ -71,19 +77,34 @@ definitions:
   UserList:
     type: "array"
     items:
-      $ref: "#/definitions/User"
+      $ref: '#/definitions/UserElement'
   User:
     type: "object"
     properties:
       id:
         type: string
-        description: Display name of Twitter.
+        description: Display user Id.
       name:
         type: string
         description: Name of user
+      articleIds:
+        type: array
+        items:
+          type: integer
+          description: List of articleIds created by the user.
+  UserElement:
+    type: "object"
+    properties:
+      name:
+        type: string
+        description: Name of the user
+      userId:
+        type: integer
+        description: Id of the user.
   ErrorResponse:
     required:
       - message
     properties:
       message:
         type: string
+        description: Error message.
