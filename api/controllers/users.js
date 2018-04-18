@@ -11,7 +11,8 @@ module.exports = {
   getUsers: getUsers,
   getUserById: getUserById
 };
-// Return object containing userId, name and list of articleIds.
+
+// Return object containing userId, name, tweetDataId and list of articleIds.
 function getUserById(request, response) {
   var userId = request.swagger.params.userId.value;
   //const userId = request.swagger.params.userId.value;
@@ -30,7 +31,6 @@ function getUserById(request, response) {
       articles.forEach(function(element) {
         articleList.push(element.articleId);
       });
-
       TweetData.findOne({author: user._id}, function(err, tweetdata) {
         var tempDataId = "null"
         if(err) {
@@ -48,6 +48,7 @@ function getUserById(request, response) {
   });
 };
 
+// Return a list of objects containing userId and name.
 function getUsers(request, response) {
   User.find({}, function(err, users) {
     if(err) {

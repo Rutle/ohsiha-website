@@ -124,6 +124,32 @@ paths:
           description: Error
           schema:
             $ref: "#/definitions/ErrorResponse"
+  /tweetdatalist/{tweetDataId}:
+    x-swagger-router-controller: tweetdata
+    get:
+      description: Retrieve information about tweet data with specified tweetDataId.
+      operationId: getTweetDataById
+      parameters:
+        - in: path
+          name: tweetDataId
+          type: integer
+          required: true
+          description: ID of the tweet data container to retrieve.
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: "#/definitions/TweetData"
+        400:
+          description: "Bad request. Tweet data ID must be an integer and bigger than 0."
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        404:
+          description: "Tweet data with the specified ID was not found."
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
   /swagger:
     x-swagger-pipe: swagger_raw
 # complex objects have schema definitions
@@ -202,28 +228,30 @@ definitions:
     items:
       type: "object"
       properties:
-        articleId:
+        tweetDataId:
           type: integer
           description: Id of the article.
-        authorId:
+        userId:
           type: integer
           description: Id of the user.
         author:
           type: string
           description: Name of the author.
-  TweetDataElement:
+  TweetData:
     type: "object"
     properties:
       tweetDataId:
         type: integer
-        description: Id of the article.
+        description: Id of the tweet data container.
       content:
-        type: string
-        description: Content of the article.
+        type: array
+        items:
+          type: string
+          description: Content of the Data.
       dateCreated:
         type: string
         description: Date of creation.
-      authorId:
+      userId:
         type: integer
         description: Id of the author.
       author:
