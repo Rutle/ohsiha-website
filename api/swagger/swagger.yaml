@@ -99,7 +99,7 @@ paths:
         200:
           description: Success
           schema:
-            $ref: "#/definitions/Articles"
+            $ref: "#/definitions/Article"
         400:
           description: "Bad request. Article ID must be an integer and bigger than 0."
           schema:
@@ -194,7 +194,7 @@ definitions:
       articleId:
         type: integer
         description: Id of the article.
-      authorId:
+      userId:
         type: integer
         description: Id of the author.
   Article:
@@ -212,7 +212,7 @@ definitions:
       dateCreated:
         type: string
         description: Date of creation.
-      authorId:
+      userId:
         type: integer
         description: Id of the author.
       author:

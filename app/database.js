@@ -40,7 +40,6 @@ module.exports = {
       if(err) {
         callback(err, null);
       }
-      //console.log("article data: ", article.comments);
       callback(null, article);
     });
   },
@@ -69,7 +68,7 @@ module.exports = {
            .sort({dateCreated: 'desc'})
            .populate('author', 'local.firstName local.lastName twitter.displayName -_id')
            //.populate({ path: 'author', select: 'fullName' })
-           .select('title content dateCreated formatted_date articleId -_id')
+           .select('title content dateCreated formattedDate articleId -_id')
            .exec(function(err, articles) {
 
       if (err) {

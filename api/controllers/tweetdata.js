@@ -1,11 +1,8 @@
 'use strict';
+// Module for handling API calls to tweet data.
 
-var User = require('../../app/models/user');
-var Article = require('../../app/models/article')
-var dbf = require('../../app/database')
+var User      = require('../../app/models/user');
 var TweetData = require('../../app/models/twitterdata')
-
-// Module for handling API calls to /users
 
 module.exports = {
   getTweetDataList: getTweetDataList,

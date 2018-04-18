@@ -1,11 +1,10 @@
 'use strict';
-
-var User = require('../../app/models/user');
-var Article = require('../../app/models/article')
-var dbf = require('../../app/database')
+// Module for handling API calls to users
+var User      = require('../../app/models/user');
+var Article   = require('../../app/models/article')
 var TweetData = require('../../app/models/twitterdata')
 
-// Module for handling API calls to /users
+
 
 module.exports = {
   getUsers: getUsers,
@@ -15,7 +14,7 @@ module.exports = {
 // Return object containing userId, name, tweetDataId and list of articleIds.
 function getUserById(request, response) {
   var userId = request.swagger.params.userId.value;
-  //const userId = request.swagger.params.userId.value;
+
   User.findOne({userId: userId}, function(err, user) {
     if(err) {
       response.status(404).json();

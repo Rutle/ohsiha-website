@@ -44,7 +44,7 @@ var articleSchema = mongoose.Schema({
 });
 
 // Virtual getter to a better formatted date to show on the blog.
-articleSchema.virtual('formatted_date').get(function() {
+articleSchema.virtual('formattedDate').get(function() {
   return new Date(this.dateCreated).toDateString();
 });
 articleSchema.set('toObject', { getters: true });
