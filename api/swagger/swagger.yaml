@@ -28,7 +28,7 @@ paths:
     get:
       description: Lists all users on the website
       # used as the method name of the controller
-      operationId: users
+      operationId: getUsers
       responses:
         200:
           description: Success
@@ -70,6 +70,60 @@ paths:
           description: Error
           schema:
             $ref: "#/definitions/ErrorResponse"
+  /articles:
+    x-swagger-router-controller: articles
+    get:
+      description: Retrieve articles.
+      operationId: getArticles
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: "#/definitions/Articles"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /articles/{articleId}:
+    x-swagger-router-controller: articles
+    get:
+      description: Retrieve articles.
+      operationId: getArticleById
+      parameters:
+        - in: path
+          name: articleId
+          type: integer
+          required: true
+          description: ID of the user to retrieve.
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: "#/definitions/Articles"
+        400:
+          description: "Bad request. Article ID must be an integer and bigger than 0."
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        404:
+          description: "An article with the specified ID was not found."
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /tweetdatalist:
+    x-swagger-router-controller: tweetdata
+    get:
+      description: Retrieve list of tweet data container information.
+      operationId: getTweetDataList
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: "#/definitions/TweetDataList"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
   /swagger:
     x-swagger-pipe: swagger_raw
 # complex objects have schema definitions
@@ -86,21 +140,95 @@ definitions:
         description: Display user Id.
       name:
         type: string
-        description: Name of user
+        description: Name of user.
+      tweetDataId:
+        type: string
+        description: Id of the tweet data container. Set to "null" if no data is found.
       articleIds:
         type: array
         items:
           type: integer
-          description: List of articleIds created by the user.
+          description: List of articleIds created by the user. Empty list if not articles are found.
   UserElement:
     type: "object"
     properties:
       name:
         type: string
-        description: Name of the user
+        description: Name of the user.
       userId:
         type: integer
         description: Id of the user.
+  Articles:
+    type: "array"
+    items:
+      $ref: '#/definitions/ArticleElement'
+  ArticleElement:
+    type: "object"
+    properties:
+      articleId:
+        type: integer
+        description: Id of the article.
+      authorId:
+        type: integer
+        description: Id of the author.
+  Article:
+    type: "object"
+    properties:
+      title:
+        type: string
+        description: Title of the article.
+      articleId:
+        type: integer
+        description: Id of the article.
+      content:
+        type: string
+        description: Content of the article.
+      dateCreated:
+        type: string
+        description: Date of creation.
+      authorId:
+        type: integer
+        description: Id of the author.
+      author:
+        type: string
+        description: Name of the author.
+      comments:
+        type: array
+        items:
+          type: string
+          description: List of comments.
+  TweetDataList:
+    type: "array"
+    items:
+      type: "object"
+      properties:
+        articleId:
+          type: integer
+          description: Id of the article.
+        authorId:
+          type: integer
+          description: Id of the user.
+        author:
+          type: string
+          description: Name of the author.
+  TweetDataElement:
+    type: "object"
+    properties:
+      tweetDataId:
+        type: integer
+        description: Id of the article.
+      content:
+        type: string
+        description: Content of the article.
+      dateCreated:
+        type: string
+        description: Date of creation.
+      authorId:
+        type: integer
+        description: Id of the author.
+      author:
+        type: string
+        description: Name of the author.
   ErrorResponse:
     required:
       - message

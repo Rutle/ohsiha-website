@@ -1,5 +1,5 @@
 function drawWordCloud(wordData) {
-  
+
   var fill = d3.scale.category20();
 
   width = $(document).width();
@@ -34,7 +34,6 @@ function drawWordCloud(wordData) {
         .style("fill", function(d, i) { return fill(i); })
         .attr("text-anchor", "middle")
         .attr("transform", function(d) {
-
           return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
         })
         .text(function(d) { return d.text; });

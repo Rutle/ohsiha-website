@@ -3,10 +3,12 @@
 var User = require('../../app/models/user');
 var Article = require('../../app/models/article')
 var dbf = require('../../app/database')
+var TweetData = require('../../app/models/twitterdata')
+
 // Module for handling API calls to /users
 
 module.exports = {
-  users: users,
+  getUsers: getUsers,
   getUserById: getUserById
 };
 // Return object containing userId, name and list of articleIds.
@@ -23,17 +25,30 @@ function getUserById(request, response) {
     Article.find({author: user._id}, function(err, articles) {
       var articleList = [];
       if(err) {
-        articleList.push("[0]Error finding articles.")
+        articleList.push(["[0]Error in finding articles."])
       }
       articles.forEach(function(element) {
         articleList.push(element.articleId);
-      })
-      response.status(200).json({id: user._userId, name: user.fullName, articleIds: articleList})
+      });
+
+      TweetData.findOne({author: user._id}, function(err, tweetdata) {
+        var tempDataId = "null"
+        if(err) {
+          console.log(err);
+        }
+        if(tweetdata) {
+          tempDataId = tweetdata.tweetDataId;
+        }
+        response.status(200).json({id: user.userId, name: user.fullName,
+                                   tweetDataId: tempDataId,
+                                   articleIds: articleList})
+      });
+
     });
   });
 };
 
-function users(request, response) {
+function getUsers(request, response) {
   User.find({}, function(err, users) {
     if(err) {
       response.status(404).json({message: "No users were found."});
@@ -45,7 +60,6 @@ function users(request, response) {
     users.forEach(function(element) {
       userList.push({name: element.fullName, userId: element.userId});
     })
-    console.log(users);
 
     response.status(200).send(userList);
   })
