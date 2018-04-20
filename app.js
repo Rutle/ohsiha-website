@@ -321,6 +321,7 @@ app.get('/article/:articleId', function(req, res, next) {
         articleExists: false
       });
     } else {
+			console.log(data.comments);
       res.render('fullarticle', {
         userIsLogged: (req.user ? true : false),
         user: req.user,
@@ -373,7 +374,7 @@ app.post('/profile', isLoggedIn, [
 	check('fname').exists().trim(),
 	check('lname').exists().trim()
 
-], function(req, res) {
+], function(req, res, next) {
 	const errors = validationResult(req);
 	if (!errors.isEmpty()) {
 		console.log(errors.mapped());
@@ -430,42 +431,17 @@ app.post('/profile', isLoggedIn, [
 });
 
 
-app.post('/articlepreview', isLoggedIn, function(req, res) {
-
-	console.log("Article posted!");
-	//console.log(req.body.generatedPost);
-	var blogPost = req.body.generatedPost;
-	var title = req.body.title;
-	var dateCreated = new Date();
-
-	User.findById(req.user._id, function(err, user) {
-		if(err) {
-			res.status(500);
-			return res.render('error', { error: 'Database error when trying to find an user.' });
-		}
-
-		var newArticle = new Article();
-		newArticle.author = user._id;
-		newArticle.title = title;
-		newArticle.content = blogPost;
-		var dateCreated = new Date(newArticle.dateCreated);
-
-		// Add a new article into database.
-		newArticle.save(function(err) {
-			if(err) {
-				res.status(500);
-				return res.render('error', { error: 'Database error when trying to save an article.' });
-			}
-		});
-
-	});
-	//console.log(dateCreated);
-	res.render('articlepreview', {
-		isSuccess: true,
-		userIsLogged: (req.user ? true : false),
-		user: req.user,
-	});
-});
+app.post('/articlepreview', isLoggedIn, [
+	// Checks the form's input field based on the "name"-property.
+	check('title', 'Title must be at least 5 chars long').exists().isLength({ min: 5 }).trim()
+], function (req, res, next) {
+	const errors = validationResult(req);
+	if (!errors.isEmpty()) {
+		res.status(400);
+		return res.render('error', {error: 'Bad Request.', errors: errors.mapped()});
+	}
+	next();
+}, dBoard.addPost);
 
 app.post('/dashboard', isLoggedIn, dBoard.postDBoard);
 
@@ -475,47 +451,11 @@ app.post('/article/:articleId', isLoggedIn, [
 ], function(req, res, next) {
 	const errors = validationResult(req);
 	if (!errors.isEmpty()) {
-		return res.render('commentfailed', {
-			errors: errors.mapped(),
-		});
+		return res.render('error', { error: 'Bad Request.',
+			errors: errors.mapped()});
 	}
-	const comData = matchedData(req);
-
-	// Explanation:
-	// Article schema contains an array which contains objects with fields text,
-	// author and dateCreated. We make an object like that.
-	var comment = {text: comData.commentData, author: req.user._id,
-								 dateCreated: new Date()};
-	// We get the article and update it with the mongoose function and use option
-	// '$push' to insert the object into the array. With the 'new: true' we recieve
-	// the new updated document back to which we then use .populate functions
-	// to fetch the author objects from User documents.
-	// Getting updated document back is no longer relevant as I'm just redirecting
-	// back to the article. Still leaving it back there.
-	Article.findOneAndUpdate({'articleId':req.params.articleId},
-													 {$push:{comments: comment} },
-													 {new: true}).populate('comments.author')
-													 .exec(function(err, data) {
-			if(err) {
-				return res.render('commentfailed', {errors: err});
-			}
-			res.redirect('/article/'+req.params.articleId);
-			//console.log(JSON.stringify(data.comments));
-			/*
-			res.render('fullarticle', {
-				userIsLogged: (req.user ? true : false),
-				user: req.user,
-				title: data.title,
-				blogPost: data.content,
-				author: data.author.fullName,
-				dateCreated: new Date(data.dateCreated).toDateString(),
-				articleExists: true,
-				comments: JSON.stringify(data.comments),
-				articleId: data.articleId,
-			});
-			*/
-		});
-});
+	next();
+}, dBoard.postComment);
 
 
 app.post('/deleteUser', isLoggedIn, function(req, res){

@@ -5,8 +5,10 @@
 var dbf         = require('./database');
 var TwitterData = require('./models/twitterdata');
 var twit        = require('./tweets');
-var markovGen   = require('./markovgen')
-
+var markovGen   = require('./markovgen');
+var User        = require('./models/user');
+var Article     = require('./models/article');
+const { matchedData } = require('express-validator/filter');
 
 // GET "/dashboard" URL
 exports.getDBoard = function(req, res){
@@ -227,7 +229,7 @@ exports.postDBoard = function(req, res, next) {
   } else if (req.body.form === "generatePost") {
     TwitterData.findOne({'author': req.user._id}, function(err, tweetData) {
       if (err) {
-        return next(err);
+        return res.status(500).send('There was a database error.');
       }
       if (!tweetData) {
         return res.status(500).send('There was no data to generate a post.');
@@ -264,9 +266,10 @@ exports.postDBoard = function(req, res, next) {
       }
     });
   } else if (req.body.form === "generateWordCloud") {
+    console.log("generateCloud")
     TwitterData.findOne({'author': req.user._id}, function(err, tweetData) {
       if (err) {
-        return next(err);
+        return res.status(500).send('There was no data to generate a post.');
       }
       if(!tweetData) {
         return res.status(500).send('There was no data to generate a wordcloud.');
@@ -295,4 +298,68 @@ exports.postDBoard = function(req, res, next) {
     });
   }
 
+}
+
+exports.addPost = function(req, res){
+  console.log("Article posted!");
+  console.log(req.body.generatedPost);
+  var blogPost = req.body.generatedPost;
+  var title = req.body.title;
+  var dateCreated = new Date();
+
+  User.findById(req.user._id, function(err, user) {
+    if(err) {
+      return res.render('error', {error: 'Database error when trying to find an user.'});
+    }
+    if(!user) {
+      //return res.status(500).send({error: 'Trouble finding user.'});
+    }
+    var newArticle = new Article();
+    newArticle.author = user._id;
+    newArticle.title = title;
+    newArticle.content = blogPost;
+    var dateCreated = new Date(newArticle.dateCreated);
+
+    // Add a new article into database.
+    newArticle.save(function(err, product, numAffected) {
+      if(err) {
+        //return res.status(500).send({error: 'Database error when trying to save the article.'});
+      }
+      console.log(product);
+      return res.redirect('/article/'+newArticle.articleId);
+    });
+
+  });
+  //console.log(dateCreated);
+
+  /*
+  res.render('articlepreview', {
+    isSuccess: true,
+    userIsLogged: (req.user ? true : false),
+    user: req.user,
+  });*/
+}
+exports.postComment = function(req, res) {
+  const comData = matchedData(req);
+
+	// Explanation:
+	// Article schema contains an array which contains objects with fields text,
+	// author and dateCreated. We make an object like that.
+	var comment = {text: comData.commentData, author: req.user._id,
+								 dateCreated: new Date()};
+	// We get the article and update it with the mongoose function and use option
+	// '$push' to insert the object into the array. With the 'new: true' we recieve
+	// the new updated document back to which we then use .populate functions
+	// to fetch the author objects from User documents.
+	// Getting updated document back is no longer relevant as I'm just redirecting
+	// back to the article. Still leaving it back there.
+	Article.findOneAndUpdate({'articleId':req.params.articleId},
+													 {$push:{comments: comment} },
+													 {new: true}).populate('comments.author')
+													 .exec(function(err, data) {
+			if(err) {
+				return res.render('commentfailed', {errors: err});
+			}
+			res.redirect('/article/'+req.params.articleId);
+		});
 }

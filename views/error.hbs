@@ -3,5 +3,8 @@
 <h1 class="my-4">Something went wrong.
 </h1>
 <p>Reason: {{error}}</p>
+  {{#each errors}}
+    <p>{{this.msg}}</p>
+  {{/each}}
 </div>
 </div>

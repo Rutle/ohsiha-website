@@ -1,9 +1,6 @@
 // Custom scripts for the website
 $(function () {
 
-  //drawWordCloud(wordcloudData);
-
-
   $('#fetchData').on('submit', function (e) {
     e.preventDefault();
 	  // var formID = $(this).parents("form").attr("name");
@@ -87,9 +84,9 @@ $(function () {
         $('#gAlertMessage').removeClass('alert-success');
         $('#gAlertMessage').addClass('alert-danger');
       }
-    })
+    });
 
-  })
+  });
   $('#cancelBtn').on('click', function(e) {
     e.preventDefault();
 
@@ -98,7 +95,7 @@ $(function () {
     $('#generatedPost').attr('placeholder', "");
     $('#articlepreview').attr('hidden', true);
 
-  })
+  });
   /*
   $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
     e.target // newly activated tab
@@ -153,5 +150,5 @@ $(function () {
         }
       });
     }
-  })
+  });
 });
