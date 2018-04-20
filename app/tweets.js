@@ -19,13 +19,13 @@ module.exports = {
     client.get('statuses/user_timeline', params, function(error, tweets, response) {
       var arrayOfTweets = [];
       var twiitti;  // due to 'use strict'
-      console.log(tweets[0]);
+      //console.log(tweets[0]);
       if (!error) {
         // Tweets is in the form of an array of objects containing tweet information
         // For example accessing first tweet's text can be done with:
         // >> tweets[0].text
       	for (twiitti of tweets) {
-          console.log("Tweet: ", twiitti.full_text);
+          //console.log("Tweet: ", twiitti.full_text);
           // Clean up text from mentions, URLs and hashtags.
           twiitti = twiitti.full_text.replace(/\B@[a-z0-9_-]+/gi,'')
                                 .replace(/\&amp\;/gi, ' ')
@@ -40,7 +40,7 @@ module.exports = {
             // Skip empty elements in array.
             sent = sent.trim();
             if (sent.length >= 3 ) {
-              console.log("Lause tallennettu: ["+sent+"]");
+              //console.log("Lause tallennettu: ["+sent+"]");
               arrayOfTweets.push(sent);
             }
 

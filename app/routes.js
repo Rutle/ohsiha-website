@@ -1,6 +1,6 @@
 'use strict';
-// ./app/dashroute.js
-// Route file for dashboard page.
+// ./app/routes.js
+// Route file
 
 var dbf         = require('./database');
 var TwitterData = require('./models/twitterdata');
@@ -56,7 +56,7 @@ exports.getDBoard = function(req, res){
     })
   })
 
-/*
+/* Left it just in case
 
 	// To reduce database calls we add information to session data about twitter
 	// data availability.
@@ -266,7 +266,7 @@ exports.postDBoard = function(req, res, next) {
       }
     });
   } else if (req.body.form === "generateWordCloud") {
-    console.log("generateCloud")
+    //console.log("generateCloud")
     TwitterData.findOne({'author': req.user._id}, function(err, tweetData) {
       if (err) {
         return res.status(500).send('There was no data to generate a post.');
@@ -283,14 +283,21 @@ exports.postDBoard = function(req, res, next) {
         var tempResArray = [];
         tempResArray = tweetData.content[j].toLowerCase().split(' ');
         for(var k = 0; k < tempResArray.length; k++) {
-          if(!wcData[tempResArray[k]]) {
-            wcData[tempResArray[k]] = 0;
+          // Leave out words that have length of 3 or less.
+          if(!(tempResArray[k].trim().length <= 3)) {
+            if(!wcData[tempResArray[k]]) {
+              wcData[tempResArray[k]] = 0;
+            }
+            wcData[tempResArray[k]]++;
+          } else {
+            //console.log(tempResArray[k]);
           }
-          wcData[tempResArray[k]]++;
+
         }
       }
+
       for(var item in wcData) {
-        wcArray.push({text: item, size: wcData[item] + Math.floor(Math.random() * 90)});
+        wcArray.push({text: item, size: wcData[item]});
       }
       //console.log("wcArray: ", wcArray);
 
@@ -301,8 +308,8 @@ exports.postDBoard = function(req, res, next) {
 }
 
 exports.addPost = function(req, res){
-  console.log("Article posted!");
-  console.log(req.body.generatedPost);
+  //console.log("Article posted!");
+  //console.log(req.body.generatedPost);
   var blogPost = req.body.generatedPost;
   var title = req.body.title;
   var dateCreated = new Date();
@@ -325,7 +332,7 @@ exports.addPost = function(req, res){
       if(err) {
         //return res.status(500).send({error: 'Database error when trying to save the article.'});
       }
-      console.log(product);
+      //console.log(product);
       return res.redirect('/article/'+newArticle.articleId);
     });
 
@@ -341,7 +348,7 @@ exports.addPost = function(req, res){
 }
 exports.postComment = function(req, res) {
   const comData = matchedData(req);
-  console.log(req.user.fullName);
+  //console.log(req.user.fullName);
 	// Explanation:
 	// Article schema contains an array which contains objects with fields text,
 	// author and dateCreated. We make an object like that.
@@ -413,27 +420,27 @@ exports.updateProfile = function(req, res) {
 exports.deleteUser = function(req, res){
   // Perhaps also remove all blog posts by this user as well.
   var user = req.user._id;
-  console.log(req.user._id);
+
 	User.findByIdAndRemove({ _id: user }, function(err, user) {
 		if(err) {
 			res.status(500);
 			return res.render('error', { error: 'Database error when trying to delete user.' });
 		}
-		console.log("user removed");
+		//console.log("user removed");
 		TwitterData.findOneAndRemove({author: user}, function(err, data) {
 			if(err) {
 				res.status(500);
 				return res.render('error', { error: 'Database error when trying to delete tweetdata.' });
 			}
-      console.log("data: ", data);
+      //console.log("data: ", data);
 			Article.find({author: user}).remove().exec( function(err, articles) {
-        console.log(articles);
+        //console.log(articles);
 				if(err) {
           console.log(err);
 					res.status(500);
 					return res.render('error', { error: 'Database error when trying to delete articles.' });
 				}
-        console.log("poistettiin: ", articles);
+        //console.log("poistettiin: ", articles);
 			});
 		});
 	});
@@ -442,8 +449,6 @@ exports.deleteUser = function(req, res){
 };
 
 exports.showArticle = function(req, res) {
-
-  //console.log("Artikkelia: ", req.params.articleId, " haetaan");
   dbf.getArticle(req, function(err, data) {
     if(err) {
 			res.status(500);
@@ -476,7 +481,6 @@ exports.showArticle = function(req, res) {
 };
 
 exports.blog = function(req, res) {
-	//console.log(req.params.page, " Type: ", typeof(req.params.page));
 	var currentPage = 0;
 	if(typeof(req.params.page) === 'undefined' || req.params.page === "0" || req.params.page === "1") {
 		// Main page
@@ -500,7 +504,7 @@ exports.blog = function(req, res) {
 		var articleCount = articles.length;
 		var maxPageCount = Math.floor(articleCount/5);
 
-		//5 articles previews per page.
+		//5 article previews per page.
 		if (articleCount % 5 === 0) {
 			maxPageCount = Math.floor(articleCount/5);
 		} else {

@@ -7,13 +7,18 @@ function drawWordCloud(wordData) {
   widthR = $('#rightS').width();
   height = $(document).height();
   heightT = $('#navtop').height();
+  maxFont = 96,
+  //maxSize = data[0].size || 1,
+  maxSize = Math.max.apply(Math,wordData.map(function(o){return o.size;}));
+  sizeOffset = maxFont / maxSize;
+
 
   d3.layout.cloud().size([width-widthL-widthR-200, height-350])
         .words(wordData)
         //.padding(5)
         .rotate(function() { return ~~(Math.random() * 2) * 90; })
         .font("Impact")
-        .fontSize(function(d) { return d.size; })
+        .fontSize(function(d) { return Math.max(25, Math.min(d.size * sizeOffset, maxFont)); })
         .on("end", draw)
         .start();
 
