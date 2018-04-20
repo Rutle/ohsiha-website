@@ -39,7 +39,8 @@ var articleSchema = mongoose.Schema({
     dateCreated: {
       type: Date,
       default: Date.now
-    }
+    },
+    name: String
   }]
 });
 

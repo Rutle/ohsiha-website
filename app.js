@@ -41,7 +41,7 @@ mongoose.connect(uristring, function (err, res) {
 var dbf = require('./app/database');
 
 // Databoard route
-var dBoard = require('./app/dashroute');
+var routes = require('./app/routes');
 
 // Tweets
 var twit = require('./app/tweets');
@@ -237,7 +237,7 @@ app.get('/profileUpdated', isLoggedIn, function(req, res) {
 });
 
 // Dashboard route
-app.get('/dashboard', isLoggedIn, dBoard.getDBoard);
+app.get('/dashboard', isLoggedIn, routes.getDBoard);
 
 // Twitter Routes
 // Authentication
@@ -385,50 +385,8 @@ app.post('/profile', isLoggedIn, [
 			user: req.user
 		});
 	}
-	const userData = matchedData(req);
-	//console.log("userData: ", userData)
-	User.findOne({'local.email': req.user.local.email}, function(err, user) {
-		if(err) {
-			return next(err);
-		}
-		//console.log(req.body.password)
-		user.comparePassword(userData.password, function(err, isMatch) {
-			if (err) {
-				res.status(500);
-				return res.render('error', { error: 'Error happened when comparing passwords.' });
-			}
-			if(isMatch) {
-				// Modify user's information acquired from the form.
-				if (!(req.body.fname === "")) {
-					user.local.firstName = userData.fname;
-				}
-				if (!(req.body.lname === "")) {
-					user.local.lastName = userData.lname;
-				}
-				// Update information.
-				user.save(function (err) {
-					if(err) {
-						console.error(err);
-						res.status(500);
-						return res.render('error', { error: 'Database error when trying to save changes.' });
-					}
-				});
-				res.render('profileUpdated', {
-					userIsLogged: (req.user ? true : false),
-					user: req.user,
-					isSuccess: true,
-				});
-			} else {
-				return res.render('profileUpdated', {
-					isSuccess: false,
-					errors: ["Wrong password"],
-					userIsLogged: (req.user ? true : false),
-					user: req.user
-				});
-			}
-		});
-	});
-});
+	next();
+}, routes.updateProfile);
 
 
 app.post('/articlepreview', isLoggedIn, [
@@ -441,9 +399,9 @@ app.post('/articlepreview', isLoggedIn, [
 		return res.render('error', {error: 'Bad Request.', errors: errors.mapped()});
 	}
 	next();
-}, dBoard.addPost);
+}, routes.addPost);
 
-app.post('/dashboard', isLoggedIn, dBoard.postDBoard);
+app.post('/dashboard', isLoggedIn, routes.postDBoard);
 
 app.post('/article/:articleId', isLoggedIn, [
 	// Checks the form's input field based on the "name"-property.
@@ -455,33 +413,10 @@ app.post('/article/:articleId', isLoggedIn, [
 			errors: errors.mapped()});
 	}
 	next();
-}, dBoard.postComment);
+}, routes.postComment);
 
 
-app.post('/deleteUser', isLoggedIn, function(req, res){
-  // Perhaps also remove all blog posts by this user as well.
-	User.findByIdAndRemove({ _id: req.user._id }, function(err, user) {
-		if(err) {
-			res.status(500);
-			return res.render('error', { error: 'Database error when trying to delete user.' });
-		}
-		console.log("user removed");
-		TwitterData.findOneAndRemove({author: req.user._id}, function(err, data) {
-			if(err) {
-				res.status(500);
-				return res.render('error', { error: 'Database error when trying to delete tweetdata.' });
-			}
-			Articles.find({author: req.user._id}, function(err, articles) {
-				if(err) {
-					res.status(500);
-					return res.render('error', { error: 'Database error when trying to delete articles.' });
-				}
-			});
-		});
-	});
-	req.logout();
-	res.redirect('/');
-});
+app.post('/deleteUser', isLoggedIn, routes.deleteUser ); 
 
 // Check if user is logged in with a middleware
 function isLoggedIn(req, res, next) {

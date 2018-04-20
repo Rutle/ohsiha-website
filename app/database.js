@@ -76,5 +76,19 @@ module.exports = {
       }
       callback(null, articles);
     });
+  },
+  getUserArticlesSorted: function (_id, callback) {
+    Article.find({author: _id})
+           .sort({dateCreated: 'desc'})
+           .populate('author', 'local.firstName local.lastName twitter.displayName -_id')
+           //.populate({ path: 'author', select: 'fullName' })
+           .select('title content dateCreated formattedDate articleId -_id')
+           .exec(function(err, articles) {
+
+      if (err) {
+          callback(err, null);
+      }
+      callback(null, articles);
+    });
   }
 }

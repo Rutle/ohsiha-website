@@ -37,7 +37,7 @@ exports.getDBoard = function(req, res){
       console.log("Twitter data is available");
     }
 
-    dbf.getArticlesSorted(function(err, articles) {
+    dbf.getUserArticlesSorted(req.user._id, function(err, articles) {
       if (articles.length === 0) {
         isArticles = false;
         console.log("No articles.");
@@ -341,12 +341,12 @@ exports.addPost = function(req, res){
 }
 exports.postComment = function(req, res) {
   const comData = matchedData(req);
-
+  console.log(req.user.fullName);
 	// Explanation:
 	// Article schema contains an array which contains objects with fields text,
 	// author and dateCreated. We make an object like that.
 	var comment = {text: comData.commentData, author: req.user._id,
-								 dateCreated: new Date()};
+								 dateCreated: new Date(), name: req.user.fullName};
 	// We get the article and update it with the mongoose function and use option
 	// '$push' to insert the object into the array. With the 'new: true' we recieve
 	// the new updated document back to which we then use .populate functions
@@ -362,4 +362,115 @@ exports.postComment = function(req, res) {
 			}
 			res.redirect('/article/'+req.params.articleId);
 		});
+};
+
+exports.updateProfile = function(req, res) {
+  const userData = matchedData(req);
+	//console.log("userData: ", userData)
+	User.findOne({'local.email': req.user.local.email}, function(err, user) {
+		if(err) {
+			return next(err);
+		}
+		//console.log(req.body.password)
+		user.comparePassword(userData.password, function(err, isMatch) {
+			if (err) {
+				res.status(500);
+				return res.render('error', { error: 'Error happened when comparing passwords.' });
+			}
+			if(isMatch) {
+				// Modify user's information acquired from the form.
+				if (!(req.body.fname === "")) {
+					user.local.firstName = userData.fname;
+				}
+				if (!(req.body.lname === "")) {
+					user.local.lastName = userData.lname;
+				}
+				// Update information.
+				user.save(function (err) {
+					if(err) {
+						console.error(err);
+						res.status(500);
+						return res.render('error', { error: 'Database error when trying to save changes.' });
+					}
+				});
+				res.render('profileUpdated', {
+					userIsLogged: (req.user ? true : false),
+					user: req.user,
+					isSuccess: true,
+				});
+			} else {
+				return res.render('profileUpdated', {
+					isSuccess: false,
+					errors: ["Wrong password"],
+					userIsLogged: (req.user ? true : false),
+					user: req.user
+				});
+			}
+		});
+	});
 }
+
+exports.deleteUser = function(req, res){
+  // Perhaps also remove all blog posts by this user as well.
+  var user = req.user._id;
+  console.log(req.user._id);
+	User.findByIdAndRemove({ _id: user }, function(err, user) {
+		if(err) {
+			res.status(500);
+			return res.render('error', { error: 'Database error when trying to delete user.' });
+		}
+		console.log("user removed");
+		TwitterData.findOneAndRemove({author: user}, function(err, data) {
+			if(err) {
+				res.status(500);
+				return res.render('error', { error: 'Database error when trying to delete tweetdata.' });
+			}
+      console.log("data: ", data);
+			Article.find({author: user}).remove().exec( function(err, articles) {
+        console.log(articles);
+				if(err) {
+          console.log(err);
+					res.status(500);
+					return res.render('error', { error: 'Database error when trying to delete articles.' });
+				}
+        console.log("poistettiin: ", articles);
+			});
+		});
+	});
+	req.logout();
+	res.redirect('/');
+};
+
+exports.showArticle = function(req, res) {
+
+  //console.log("Artikkelia: ", req.params.articleId, " haetaan");
+  dbf.getArticle(req, function(err, data) {
+    if(err) {
+			res.status(500);
+			return res.render('error', { error: 'Database error when trying to find an article.' });
+    }
+    // Couldn't find an article with given ID.
+    if (data.length === 0) {
+      isArticle = false;
+      res.render('fullarticle', {
+        userIsLogged: (req.user ? true : false),
+        user: req.user,
+        articleExists: false
+      });
+    } else {
+			//console.log(data.comments);
+      res.render('fullarticle', {
+        userIsLogged: (req.user ? true : false),
+        user: req.user,
+        title: data.title,
+        blogPost: data.content,
+        author: data.author.fullName,
+        dateCreated: new Date(data.dateCreated).toDateString(),
+        articleExists: true,
+				articleId: data.articleId,
+				comments: data.comments
+      })
+    }
+
+  });
+};
