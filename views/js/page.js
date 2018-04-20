@@ -16,8 +16,8 @@ $(function () {
 	// Ajax post call to make server side fetch the tweet data for current user.
     $.ajax({
       type: 'POST',
-      url: 'http://localhost:5000/dashboard',
-      //url: 'https://ohsiha-webmc.herokuapp.com/dashboard',
+      //url: 'http://localhost:5000/dashboard',
+      url: 'https://ohsiha-webmc.herokuapp.com/dashboard',
       data: {form: 'fetchData'},
       dataType: 'json',
       success: function (data) {
@@ -52,8 +52,8 @@ $(function () {
 
     $.ajax({
       type: 'POST',
-      url: 'http://localhost:5000/dashboard',
-      //url: 'https://ohsiha-webmc.herokuapp.com/dashboard',
+      //url: 'http://localhost:5000/dashboard',
+      url: 'https://ohsiha-webmc.herokuapp.com/dashboard',
       data: {form: 'generatePost'},
       dataType: 'json',
       success: function(data) {
@@ -96,45 +96,26 @@ $(function () {
     $('#articlepreview').attr('hidden', true);
 
   });
-  /*
-  $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
-    e.target // newly activated tab
-    e.relatedTarget // previous active tab
-    console.log("e.target: ", e.target);
-    console.log("e.relatedTarget: ", e.relatedTarget);
-  })*/
+
   $('#dashboardTab a[href="#stats"]').on('shown.bs.tab', function (e) {
-    //e.preventDefault()
+
     // Generate new wordcloud because new data was fetched.
     $('#wcMessage').prop("hidden", true);
     $("#spinner1").show();
     $(this).tab('show');
-    console.log("Session storage fetched on " +sessionStorage.generateWC);
+    //console.log("Session storage fetched on " +sessionStorage.generateWC);
     //console.log(this);
     if(sessionStorage.generateWC === '1') {
       $.ajax({
         type: 'POST',
-        url: 'http://localhost:5000/dashboard',
-        //url: 'https://ohsiha-webmc.herokuapp.com/dashboard',
+        //url: 'http://localhost:5000/dashboard',
+        url: 'https://ohsiha-webmc.herokuapp.com/dashboard',
         data: {form: 'generateWordCloud'},
         dataType: 'json',
         success: function(data) {
-          //console.log("title: ", data.title);
-          //console.log(JSON.stringify(data));
-          //$('#gAlertMessage').text("There is data to generate a post.");
-          //$('#title').attr('value', data.title);
-          //$('#author').attr('value', data.author);
-          //$('#generatedPost').val(data.data);
           $('#wcMessage').prop("hidden", true);
-          //$('#spinner').prop("hidden", true);
           $('#spinner').hide();
-          //$('#generatePostSubmit').val('Generate');
-          //$('#generatePostSubmit').prop('disabled', false);
-          //$('#generatePostSubmit').trigger('blur');
-          //wordcloudData = data.wordcloudData;
-          //console.log(wordcloudData);
-          //drawWordCloud(wordcloudData);
-          //console.log("Data haettu: ", data.wordData);
+
           d3.select("svg").remove();
           drawWordCloud(data.wordData)
           sessionStorage.setItem('generateWC', '0');

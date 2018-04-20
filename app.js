@@ -304,39 +304,7 @@ app.get('/unlink/twitter', function(req, res) {
 	});
 });
 
-app.get('/article/:articleId', function(req, res, next) {
-
-  //console.log("Artikkelia: ", req.params.articleId, " haetaan");
-  dbf.getArticle(req, function(err, data) {
-    if(err) {
-			res.status(500);
-			return res.render('error', { error: 'Database error when trying to find an article.' });
-    }
-    // Couldn't find an article with given ID.
-    if (data.length === 0) {
-      isArticle = false;
-      res.render('fullarticle', {
-        userIsLogged: (req.user ? true : false),
-        user: req.user,
-        articleExists: false
-      });
-    } else {
-			console.log(data.comments);
-      res.render('fullarticle', {
-        userIsLogged: (req.user ? true : false),
-        user: req.user,
-        title: data.title,
-        blogPost: data.content,
-        author: data.author.fullName,
-        dateCreated: new Date(data.dateCreated).toDateString(),
-        articleExists: true,
-				articleId: data.articleId,
-				comments: data.comments
-      })
-    }
-
-  });
-});
+app.get('/article/:articleId', routes.showArticle);
 
 app.get('/user/:userId', function(req, res, next) {
   //console.log("User: ", req.params.userId, " haettu");
@@ -416,7 +384,7 @@ app.post('/article/:articleId', isLoggedIn, [
 }, routes.postComment);
 
 
-app.post('/deleteUser', isLoggedIn, routes.deleteUser ); 
+app.post('/deleteUser', isLoggedIn, routes.deleteUser );
 
 // Check if user is logged in with a middleware
 function isLoggedIn(req, res, next) {

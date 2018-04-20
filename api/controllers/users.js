@@ -33,7 +33,7 @@ function getUserById(request, response) {
       TweetData.findOne({author: user._id}, function(err, tweetdata) {
         var tempDataId = "null"
         if(err) {
-          console.log(err);
+          //console.log(err);
         }
         if(tweetdata) {
           tempDataId = tweetdata.tweetDataId;
@@ -51,7 +51,7 @@ function getUserById(request, response) {
 function getUsers(request, response) {
   User.find({}, function(err, users) {
     if(err) {
-      response.status(404).json({message: "No users were found."});
+      response.status(500).json({message: "No users were found."});
     }
     if(!users) {
       response.status(404).json({message: "No users were found."});
