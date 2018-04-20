@@ -358,7 +358,7 @@ exports.postComment = function(req, res) {
 													 {new: true}).populate('comments.author')
 													 .exec(function(err, data) {
 			if(err) {
-				return res.render('commentfailed', {errors: err});
+				return res.render('error', {error: "Comment failed.", errors: err});
 			}
 			res.redirect('/article/'+req.params.articleId);
 		});
@@ -474,3 +474,48 @@ exports.showArticle = function(req, res) {
 
   });
 };
+
+exports.blog = function(req, res) {
+	//console.log(req.params.page, " Type: ", typeof(req.params.page));
+	var currentPage = 0;
+	if(typeof(req.params.page) === 'undefined' || req.params.page === "0" || req.params.page === "1") {
+		// Main page
+		currentPage = 1;
+	} else {
+		currentPage = parseInt(req.params.page);
+	}
+	var isArticles = true;
+	dbf.getArticlesSorted(function(err, articles) {
+		if(err) {
+			isArticles = false;
+			res.status(500);
+			return res.render('error', { error: 'Database error.' });
+		}
+
+		if(articles.length === 0) {
+			isArticles = false;
+		}
+
+		var pageArticles = articles.slice(((currentPage-1)*5), (currentPage*5));
+		var articleCount = articles.length;
+		var maxPageCount = Math.floor(articleCount/5);
+
+		//5 articles previews per page.
+		if (articleCount % 5 === 0) {
+			maxPageCount = Math.floor(articleCount/5);
+		} else {
+			maxPageCount = Math.floor(articleCount/5) + 1
+		}
+
+		res.render('blog', {
+			user : req.user,
+			userIsLogged : (req.user ? true : false),
+			articles: pageArticles,
+			isArticles: isArticles,
+			prevPage: currentPage-1,
+			curPage: currentPage,
+			nextPage: currentPage+1,
+			maxPages: maxPageCount
+		});
+	})
+}

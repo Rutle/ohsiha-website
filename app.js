@@ -27,7 +27,6 @@ const { matchedData, sanitize } = require('express-validator/filter');
 // Connection to database.
 // Here we find an appropriate database to connect to, defaulting to
 // localhost if we don't find one.
-
 var uristring = process.env.MONGODB_URI || 'mongodb://localhost';
 mongoose.connect(uristring, function (err, res) {
 	if (err) {
@@ -40,7 +39,7 @@ mongoose.connect(uristring, function (err, res) {
 // Database functions
 var dbf = require('./app/database');
 
-// Databoard route
+// Routes
 var routes = require('./app/routes');
 
 // Tweets
@@ -61,9 +60,6 @@ var TwitterData = require('./app/models/twitterdata');
 var config = {
   appRoot: __dirname // required config
 };
-
-// Routes
-// var routes = require('./app/routers');
 
 
 // Configure passport with strageties to handle authentications.
@@ -113,50 +109,8 @@ app.get('/', function(req, res, next) {
 	});
 });
 
-app.get(['/blog','/blog/:page(\\d+)/'], function(req, res, next) {
-	//console.log(req.params.page, " Type: ", typeof(req.params.page));
-	var currentPage = 0;
-	if(typeof(req.params.page) === 'undefined' || req.params.page === "0" || req.params.page === "1") {
-		// Main page
-		currentPage = 1;
-	} else {
-		currentPage = parseInt(req.params.page);
-	}
-	var isArticles = true;
-	dbf.getArticlesSorted(function(err, articles) {
-		if(err) {
-			isArticles = false;
-			res.status(500);
-			return res.render('error', { error: 'Database error.' });
-		}
-
-		if(articles.length === 0) {
-			isArticles = false;
-		}
-
-		var pageArticles = articles.slice(((currentPage-1)*5), (currentPage*5));
-		var articleCount = articles.length;
-		var maxPageCount = Math.floor(articleCount/5);
-
-		//5 articles previews per page.
-		if (articleCount % 5 === 0) {
-			maxPageCount = Math.floor(articleCount/5);
-		} else {
-			maxPageCount = Math.floor(articleCount/5) + 1
-		}
-
-		res.render('blog', {
-			user : req.user,
-			userIsLogged : (req.user ? true : false),
-			articles: pageArticles,
-			isArticles: isArticles,
-			prevPage: currentPage-1,
-			curPage: currentPage,
-			nextPage: currentPage+1,
-			maxPages: maxPageCount
-		});
-	})
-});
+// Shows articles and does pagination.
+app.get(['/blog','/blog/:page(\\d+)/'], routes.blog );
 
 // Possible Admin page. (Maybe once I integrate this to my own website.)
 app.get('/admin', isLoggedIn, function(req, res) {
@@ -173,26 +127,7 @@ app.get('/admin', isLoggedIn, function(req, res) {
 	}
 
 });
-/*
-// Testing and possible page for profile and additional information.
-app.get('/profile', isLoggedIn, function(req, res){
-	var twitterLink = true;
-	var localLink = true;
-	if (req.user.twitter.token === undefined) {
-		twitterLink = false;
-	}
-	if (req.user.local.email === undefined) {
-		localLink = false;
-	}
 
-  res.render('profile', {
-      user : req.user,
-			isTwitterLinked: twitterLink,
-			isLocalLinked: localLink,
-			userIsLogged : (req.user ? true : false)
-  });
-});
-*/
 // Logout route
 app.get('/logout', function(req, res){
   req.logout();
@@ -206,7 +141,6 @@ app.get('/login', function(req, res){
   if((loginMessage.length > 0)) {
     successMessage = false;
   }
-	//console.log(loginMessage[0]);
   res.render('login', {
     message: loginMessage[0],
     isSuccess: successMessage,
@@ -304,18 +238,11 @@ app.get('/unlink/twitter', function(req, res) {
 	});
 });
 
+// Show article
 app.get('/article/:articleId', routes.showArticle);
-
-app.get('/user/:userId', function(req, res, next) {
-  //console.log("User: ", req.params.userId, " haettu");
-  dbf.getUser(req, function(err, data) {
-    //console.log(data);
-  });
-});
 
 
 // ####	POST	####
-
 // Handles submitted login form. (POST)
 // Use 'local-login' strategy.
 app.post('/login', passport.authenticate('local-login', {
@@ -356,7 +283,7 @@ app.post('/profile', isLoggedIn, [
 	next();
 }, routes.updateProfile);
 
-
+// A preview on dashboard.
 app.post('/articlepreview', isLoggedIn, [
 	// Checks the form's input field based on the "name"-property.
 	check('title', 'Title must be at least 5 chars long').exists().isLength({ min: 5 }).trim()
@@ -369,8 +296,11 @@ app.post('/articlepreview', isLoggedIn, [
 	next();
 }, routes.addPost);
 
+// Dashboard's form handling
 app.post('/dashboard', isLoggedIn, routes.postDBoard);
 
+
+// Commenting on an article.
 app.post('/article/:articleId', isLoggedIn, [
 	// Checks the form's input field based on the "name"-property.
 	check('commentData').exists().not().isEmpty().trim()
@@ -383,7 +313,7 @@ app.post('/article/:articleId', isLoggedIn, [
 	next();
 }, routes.postComment);
 
-
+// Delete user and all related data. Leaves comments.
 app.post('/deleteUser', isLoggedIn, routes.deleteUser );
 
 // Check if user is logged in with a middleware
@@ -395,8 +325,6 @@ function isLoggedIn(req, res, next) {
 
 module.exports = app; // for testing
 
-
-
 /* Swagger configuration */
 SwaggerExpress.create(config, function(err, swaggerExpress) {
   if (err) { throw err; }
@@ -405,10 +333,7 @@ SwaggerExpress.create(config, function(err, swaggerExpress) {
   swaggerExpress.register(app);
 
   app.listen(port);
-	/*
-  if (swaggerExpress.runner.swagger.paths['/hello']) {
-    console.log('try this:\ncurl http://127.0.0.1:' + port + '/hello?name=Scott');
-  }*/
+
 });
 
 // Include the API documentation using Swagger UI
