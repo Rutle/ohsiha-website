@@ -252,13 +252,13 @@ exports.postDBoard = function(req, res, next) {
             });
 
           }
-          console.log(data.refs);
+          //console.log(data.refs);
           return res.status(200).send({
             userIsLogged: (req.user ? true : false),
             title: "Clever musings.",
             dateCreated: new Date().toDateString(),
             data: data.data,
-            refs: data.refs,
+            refs: data.refs,  // Could have displayed there to the user. Senteces that were used as resource.
             author: req.user.twitter.displayName,
             //wordcloudData: wcArray
           });
